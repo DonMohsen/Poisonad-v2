@@ -76,9 +76,9 @@ export default function DashboardPage() {
       <div>
         {reserveData?.weekDays.map((day)=>
         (
-          <p>
+          <p key={day.day}>
             {day.mealTypes?.map((meal)=>(
-              <p>
+              <p key={`${meal.name} ${meal.date}`}>
                 {meal.reserve.foodNames}
               </p>
             ))}

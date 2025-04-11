@@ -4,10 +4,12 @@ import { useUserInfo } from '@/hooks/useUserInfo';
 import toast, { Toaster } from 'react-hot-toast';
 import { Button } from '@/components/ui/button'; // Assuming you're using shadcn/ui
 import { Loader2 } from 'lucide-react';
+import { useReserveWithWeekStart } from '@/hooks/useReserveWithWeekStart';
 
 export default function DashboardPage() {
   const { loading, error, data } = useUserInfo();
   const { logout, isLoading: isLoggingOut, error: logoutError } = useLogout();
+  const { data:reserveData,error:reserveError,loading:reserveLoading } = useReserveWithWeekStart();
 
   const handleLogout = async () => {
     const toastId = toast.loading('Logging out...');
@@ -65,6 +67,24 @@ export default function DashboardPage() {
             {JSON.stringify(data, null, 2)}
           </pre>
         </div>
+      </div>
+      <div className='bg-green-300'>
+      <pre className="bg-gray-50 p-4 rounded-md overflow-auto max-h-96">
+            {JSON.stringify(reserveData, null, 2)}
+          </pre>
+      </div>
+      <div>
+        {reserveData?.weekDays.map((day)=>
+        (
+          <p>
+            {day.mealTypes?.map((meal)=>(
+              <p>
+                {meal.reserve.foodNames}
+              </p>
+            ))}
+          </p>
+        )
+        )}
       </div>
     </div>
   );

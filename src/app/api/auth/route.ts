@@ -3,12 +3,6 @@ import https from 'https';
 
 export async function POST(request: Request) {
   // Only allow SSL bypass in development
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json(
-      { error: 'SSL verification cannot be disabled in production' },
-      { status: 403 }
-    );
-  }
 
   try {
     const formData = await request.formData();

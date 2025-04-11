@@ -3,9 +3,7 @@ import https from 'https';
 
 // Create agent based on environment
 const getAgent = () => {
-  if (process.env.NODE_ENV === 'development') {
-    return new https.Agent({ rejectUnauthorized: false });
-  }
+
   // In production, use system certs or add specific certs
   return new https.Agent({ 
     rejectUnauthorized: true,

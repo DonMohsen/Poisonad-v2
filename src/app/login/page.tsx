@@ -1,244 +1,163 @@
-"use client";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+"use client"
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import useAuth from '@/hooks/useAuth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 
-export default function LoginPage() {
-    const router = useRouter();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [token, setToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [userData, setUserData] = useState<any>(null);
-    useEffect(() => {
-      const storedToken = localStorage.getItem("bearerToken");
-      if (storedToken) {
-        setToken(storedToken);
-        fetchAndStoreUser(storedToken); // ⬅️ fetch user on page load
+// Form validation schema
+const formSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(10, 'کد ملی باید 10 رقمی باشد')
+});
+
+const LoginPage = () => {
+  const [token, setToken] = useState<null|string>(null)
+  const router = useRouter();
+  const { login } = useAuth();
+  useEffect(() => {
+    const accessToken=localStorage.getItem('bearerToken')
+  accessToken&&router.replace('/dashboard')
+  }, [token])
+  
+ 
+  // Form setup with validation
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+      password: ''
+    }
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    let loadingToast: string | undefined;
+    
+    try {
+      setIsSubmitting(true);
+      loadingToast = toast.loading('Signing in...');
+      
+      const response = await login(values.username, values.password);
+      
+      if (response?.access_token) {
+        localStorage.setItem("bearerToken", response.access_token);
+        setToken(response.access_token)
+
+        toast.success('Login successful! Redirecting...', { id: loadingToast });
+        router.push('/dashboard');
       }
-    }, []);
-//!..............................................
-const login = async () => {
-  setLoading(true);
-  setError(null);
-
-  try {
-    const res = await fetch("https://saba.nus.ac.ir/oauth/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "Basic c2FtYWQtbW9iaWxlOnNhbWFkLW1vYmlsZS1zZWNyZXQ",
-      },
-      body: new URLSearchParams({
-        username,
-        password,
-        grant_type: "password",
-        scope: "read write",
-      }).toString(),
-    });
-
-    if (!res.ok) {
-      throw new Error("Login failed");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
+      toast.error(errorMessage, { id: loadingToast });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const data = await res.json();
-    const accessToken = data.access_token;
-
-    localStorage.setItem("bearerToken", accessToken);
-    setToken(accessToken);
-    console.log("userauth::::::", data);
-
-    await fetchAndStoreUser(accessToken); // 👈 call right after login
-    router.push("/dashboard");
-  } catch (err: any) {
-    setError(err.message || "Something went wrong.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-const fetchAndStoreUser = async (accessToken: string) => {
-  try {
-    const res = await fetch("https://saba.nus.ac.ir/rest/users/me", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch user data");
-    }
-
-    const user = await res.json();
-    setUserData(user);
-    console.log("Fetched user data:", user);
-  } catch (err) {
-    console.error("Error fetching user data:", err);
-  }
-};
-
-const handleLogout = () => {
-  localStorage.removeItem("bearerToken");
-  setToken(null);
-  setUserData(null);
-};
-const makeAuthenticatedRequest = async () => {
-        if (!token) {
-          console.error("No token found");
-          return;
-        }
+  };
+    useEffect(() => {
+  //  router.replace('/dashboard')
+    }, [])
     
-        const url = "https://saba.nus.ac.ir/rest/users/me"; // Replace with your API endpoint
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-        };
-    
-        try {
-          const res = await fetch(url, {
-            method: "GET", // or POST, PUT, etc.
-            headers: headers,
-          });
-    
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-    
-          const data = await res.json();
-            setUserData(data.payload)
-          console.log("Authenticated response data:", data);
-        } catch (error) {
-          console.error("Error during authenticated request:", error);
-        }
-      };
-      const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault(); // 🔥 prevent page refresh
-        if (!username || !password) {
-          setError("Username and password required");
-          return;
-        }
-        login(); // 👈 your login logic stays here
-      };
   return (
-    <div className="flex items-center justify-center min-h-screen px-4">
-      <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
-        <input
-          type="text"
-          autoComplete="username"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full px-4 py-2 bg-gray-100 rounded-md"
-        />
-        <input
-          type="password"
-          autoComplete="current-password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 bg-gray-100 rounded-md"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-
-        {error && <p className="text-red-600">{error}</p>}
-      </form>
-
-      {token && userData && (
-        <div className="mt-6 text-center">
-          <h2 className="text-xl font-bold">{`${userData.firstName} ${userData.lastName}`}</h2>
-          <button
-            onClick={makeAuthenticatedRequest}
-            className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md"
-          >
-            fetch the new user
-          </button>
-        </div>
-      )}
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <Card className="w-full max-w-md mx-4">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your username"
+                        autoComplete="username"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        autoComplete="current-password"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+      
+      {/* Add the Toaster component at the root of your login page */}
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: '#fff',
+            color: '#000',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            borderRadius: '8px',
+            padding: '16px',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10B981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#EF4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
     </div>
   );
-}
+};
 
-      // const handleSubmit = async (e: React.FormEvent<HTMLButtonElement>) => {
-      //   e.preventDefault();
-    
-      //   const url = "https://saba.nus.ac.ir/oauth/token";
-      //   const body = new URLSearchParams({
-      //     username: username,
-      //     password: password,
-      //     grant_type: "password",
-      //     scope: "read write",
-      //   });
-    
-      //   const headers = {
-      //     "Content-Type": "application/x-www-form-urlencoded",
-      //     Authorization: "Basic c2FtYWQtbW9iaWxlOnNhbWFkLW1vYmlsZS1zZWNyZXQ",
-      //   };
-    
-      //   try {
-      //     const res = await fetch(url, {
-      //       method: "POST",
-      //       headers: headers,
-      //       body: body.toString(),
-      //     });
-    
-      //     if (!res.ok) {
-      //       throw new Error(`HTTP error! status: ${res.status}`);
-      //     }
-    
-      //     const data = await res.json();
-      //     console.log("Response data:", data);
-    
-      //     // Store the token in localStorage and state
-      //     if (data.access_token) {
-      //       localStorage.setItem("bearerToken", data.access_token); // Store in localStorage
-      //       setToken(data.access_token); // Store in state
-      //     }
-      //   } catch (error) {
-      //     console.error("Error during fetch:", error);
-      //   }
-      // };
-    
-      // const makeAuthenticatedRequest = async () => {
-      //   if (!token) {
-      //     console.error("No token found");
-      //     return;
-      //   }
-    
-      //   const url = "https://saba.nus.ac.ir/rest/users/me"; // Replace with your API endpoint
-      //   const headers = {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-      //   };
-    
-      //   try {
-      //     const res = await fetch(url, {
-      //       method: "GET", // or POST, PUT, etc.
-      //       headers: headers,
-      //     });
-    
-      //     if (!res.ok) {
-      //       throw new Error(`HTTP error! status: ${res.status}`);
-      //     }
-    
-      //     const data = await res.json();
-      //       setUserData(data)
-      //     console.log("Authenticated response data:", data);
-      //   } catch (error) {
-      //     console.error("Error during authenticated request:", error);
-      //   }
-      // };
-    
-      // const handleLogout = () => {
-      //   // Clear the token from localStorage and state
-      //   localStorage.removeItem("bearerToken");
-      //   setToken(null);
-      //   console.log("Logged out successfully");
-      // };
-    
+export default LoginPage;

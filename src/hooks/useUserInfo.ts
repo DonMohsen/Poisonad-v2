@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { UserProfile } from '@/types/userInfo';
 
 export const useUserInfo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<UserProfile|null>(null);
   const router = useRouter();
 
   const fetchUserData = useCallback(async () => {
@@ -43,10 +44,12 @@ export const useUserInfo = () => {
       if (!result?.payload) throw new Error('Invalid data format');
       
       setData(result.payload);
+      console.log("The users/me results======>>>>>",result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
+      
     }
   }, [router]);
 

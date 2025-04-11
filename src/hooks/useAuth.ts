@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
 const useAuth = () => {
-  const [data, setData] = useState<any>(null); // To store the API response
-  const [error, setError] = useState<string | null>(null); // To store error messages
-  const [loading, setLoading] = useState<boolean>(false); // To track loading state
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const login = async (username: string, password: string) => {
-    setLoading(true); // Set loading to true when the request starts
-    setError(null); // Clear any previous errors
-    setData(null); // Clear any previous data
+    setLoading(true);
+    setError(null);
+    setData(null);
 
     try {
       const postData = new URLSearchParams();
@@ -34,11 +34,15 @@ const useAuth = () => {
       }
 
       const responseData = await res.json();
-      setData(responseData); // Store the response data
+      setData(responseData);
+      console.log("the res of auth======>>>>",responseData);
+      
+      return responseData; // Return the data in case you want to use it directly
     } catch (err: any) {
-      setError(err.message || 'Something went wrong'); // Capture and set the error
+      setError(err.message || 'Something went wrong');
+      throw err; // Re-throw the error if you want to handle it in the component
     } finally {
-      setLoading(false); // Set loading to false when the request completes
+      setLoading(false);
     }
   };
 

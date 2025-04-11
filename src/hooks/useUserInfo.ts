@@ -11,23 +11,28 @@ export const useUserInfo = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const token = localStorage.getItem('bearerToken');
       if (!token) {
         router.push('/login');
         return;
       }
 
-      const res = await fetch('/api/users/me', {
-        headers: { 
-          'Authorization': `Bearer ${token}` 
-        }
+      // Directly fetch the external endpoint here
+      const res = await fetch('https://saba.nus.ac.ir/rest/users/me', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        // If SSL bypass is needed in development mode, you can do it like this:
+        // agent: new https.Agent({ rejectUnauthorized: false })
       });
 
       if (!res.ok) {
         if (res.status === 401) {
           localStorage.removeItem('bearerToken');
-          router.push('/login');
+          router.push('/');
         }
         throw new Error(`Request failed: ${res.status}`);
       }

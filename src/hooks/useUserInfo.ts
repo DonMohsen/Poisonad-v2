@@ -24,6 +24,8 @@ export const useUserInfo = () => {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+
         },
         // If SSL bypass is needed in development mode, you can do it like this:
         // agent: new https.Agent({ rejectUnauthorized: false })

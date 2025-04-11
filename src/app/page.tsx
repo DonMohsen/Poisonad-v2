@@ -23,17 +23,21 @@ const LoginComponent = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input
+      <input
           type="text"
+          autoComplete="username"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="w-full px-4 py-2 bg-gray-100 rounded-md"
         />
         <input
           type="password"
+          autoComplete="current-password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-2 bg-gray-100 rounded-md"
         />
         <button type="submit" disabled={loading}>Login</button>
       </form>

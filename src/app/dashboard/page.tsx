@@ -5,12 +5,20 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Button } from '@/components/ui/button'; // Assuming you're using shadcn/ui
 import { Loader2 } from 'lucide-react';
 import { useReserveWithWeekStart } from '@/hooks/useReserveWithWeekStart';
+import { useState } from 'react';
+import { useForgetCardCodes } from '@/hooks/useForgetCardCodes';
 
 export default function DashboardPage() {
   const { loading, error, data } = useUserInfo();
   const { logout, isLoading: isLoggingOut, error: logoutError } = useLogout();
   const { data:reserveData,error:reserveError,loading:reserveLoading } = useReserveWithWeekStart();
-
+  // const [reserveId, setReserveId] = useState<null|string>(null);
+  const { loading:ForgetCardCodesLoading, error:ForgetCardCodesError, data:ForgetCardCodesData, fetchForgetCardCodes } = useForgetCardCodes();
+  const handleForgetCardCodes = (reserveId:string) => {
+    if (reserveId) {
+      fetchForgetCardCodes(reserveId);
+    }
+  };
   const handleLogout = async () => {
     const toastId = toast.loading('Logging out...');
     try {
@@ -63,29 +71,45 @@ export default function DashboardPage() {
         
         <div className="mt-4">
           <h3 className="font-medium mb-2">Profile Details:</h3>
-          <pre className="bg-gray-50 p-4 rounded-md overflow-auto max-h-96">
+          {/* <pre className="bg-gray-50 p-4 rounded-md overflow-auto max-h-96">
             {JSON.stringify(data, null, 2)}
-          </pre>
+          </pre> */}
         </div>
       </div>
       <div className='bg-green-300'>
-      <pre className="bg-gray-50 p-4 rounded-md overflow-auto max-h-96">
+      {/* <pre className="bg-gray-50 p-4 rounded-md overflow-auto max-h-96">
             {JSON.stringify(reserveData, null, 2)}
-          </pre>
+          </pre> */}
       </div>
       <div>
         {reserveData?.weekDays.map((day)=>
         (
-          <p key={day.day}>
+          <div key={day.day}>
             {day.mealTypes?.map((meal)=>(
-              <p key={`${meal.name} ${meal.date}`}>
+              <div className='cursor-pointer'
+              onClick={()=>handleForgetCardCodes(meal.reserve.id.toString())}
+              key={meal.reserve.key}>
                 {meal.reserve.foodNames}
-              </p>
+                {ForgetCardCodesLoading&&<Loader2></Loader2>}
+              </div>
             ))}
-          </p>
+          </div>
         )
         )}
       </div>
+      <div>
+      
+     
+      
+      {ForgetCardCodesError && <div className="error">{error}</div>}
+      {ForgetCardCodesData && <div>
+            {ForgetCardCodesData.forgotCardCode}
+        {/* <pre className="bg-gray-50 p-4 rounded-md overflow-auto max-h-96">
+             {JSON.stringify(ForgetCardCodesData, null, 2)}
+           </pre> */}
+      </div>
+          }
+    </div>
     </div>
   );
 }

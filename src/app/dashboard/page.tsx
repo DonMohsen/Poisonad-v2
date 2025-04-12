@@ -7,12 +7,23 @@ import { Loader2 } from 'lucide-react';
 import { useReserveWithWeekStart } from '@/hooks/useReserveWithWeekStart';
 import { useState } from 'react';
 import { useForgetCardCodes } from '@/hooks/useForgetCardCodes';
+import Modal from '@/components/ui/Modal';
+import QRCodeBox from '@/components/ui/QRCodeBox';
 
 export default function DashboardPage() {
   const { loading, error, data } = useUserInfo();
   const { logout, isLoading: isLoggingOut, error: logoutError } = useLogout();
   const { data:reserveData,error:reserveError,loading:reserveLoading } = useReserveWithWeekStart();
   // const [reserveId, setReserveId] = useState<null|string>(null);
+  const [qrValue, setQrValue] = useState<string | null>(null);
+
+  const openQRModal = (id: string) => {
+    setQrValue(id);
+  };
+
+  const closeQRModal = () => {
+    setQrValue(null);
+  };
   const { loading:ForgetCardCodesLoading, error:ForgetCardCodesError, data:ForgetCardCodesData, fetchForgetCardCodes } = useForgetCardCodes();
   const handleForgetCardCodes = (reserveId:string) => {
     if (reserveId) {
@@ -87,7 +98,7 @@ export default function DashboardPage() {
           <div key={day.day}>
             {day.mealTypes?.map((meal)=>(
               <div className='cursor-pointer'
-              onClick={()=>handleForgetCardCodes(meal.reserve.id.toString())}
+              onClick={() => openQRModal(meal.reserve.id.toString())}
               key={meal.reserve.key}>
                 {meal.reserve.foodNames}
                 {ForgetCardCodesLoading&&<Loader2></Loader2>}
@@ -97,6 +108,9 @@ export default function DashboardPage() {
         )
         )}
       </div>
+      <Modal open={!!qrValue} onClose={closeQRModal} title="کد فراموشی">
+        {qrValue && <QRCodeBox value={qrValue} />}
+      </Modal>
       <div>
       
      

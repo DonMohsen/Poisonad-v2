@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.1",
     "@hookform/resolvers": "^5.0.1",
     "@prisma/client": "^6.5.0",
     "@radix-ui/react-label": "^2.1.3",

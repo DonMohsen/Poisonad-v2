@@ -24,7 +24,7 @@ const LoginPage = () => {
   const { login } = useAuth();
   useEffect(() => {
     const accessToken=localStorage.getItem('bearerToken')
-  accessToken&&router.replace('/dashboard')
+  accessToken&&router.replace('/food')
   }, [token])
   
  
@@ -50,12 +50,13 @@ const LoginPage = () => {
       
       if (response?.access_token) {
         localStorage.setItem("bearerToken", response.access_token);
+        localStorage.setItem("refreshToken",response.refresh_token)
         console.log(response);
         
         setToken(response.access_token)
 
         toast.success('Login successful! Redirecting...', { id: loadingToast });
-        router.push('/dashboard');
+        router.push('/food');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';

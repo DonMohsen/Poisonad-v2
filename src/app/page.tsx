@@ -7,7 +7,7 @@ const HomePage = () => {
   
   const router = useRouter();
   useEffect(() => {
- router.replace('/dashboard')
+ router.replace('/food')
   }, [])
   
   return (

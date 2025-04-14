@@ -119,7 +119,7 @@ export default function DashboardPage() {
                 key={meal.reserve.key}
               >
                 {meal.reserve.foodNames}
-                {ForgetCardCodesLoading && <Loader2></Loader2>}
+                {/* {ForgetCardCodesLoading && <Loader2></Loader2>} */}
               </div>
             ))}
           </div>

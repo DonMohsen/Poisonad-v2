@@ -42,11 +42,13 @@ export const useForgetCardCodes = () => {
 
       const result = await res.json();
       if (!result?.payload) throw new Error('Invalid data format');
+      console.log("result of forget code:",result);
       
       setData(result.payload);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
+      
       setLoading(false);
     }
   }, [router]);

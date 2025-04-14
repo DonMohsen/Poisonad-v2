@@ -50,6 +50,8 @@ const LoginPage = () => {
       
       if (response?.access_token) {
         localStorage.setItem("bearerToken", response.access_token);
+        console.log(response);
+        
         setToken(response.access_token)
 
         toast.success('Login successful! Redirecting...', { id: loadingToast });

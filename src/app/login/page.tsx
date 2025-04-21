@@ -14,8 +14,8 @@ import toast, { Toaster } from 'react-hot-toast';
 
 // Form validation schema
 const formSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(10, 'کد ملی باید 10 رقمی باشد')
+  username: z.string().min(1, 'نام کاربری فراموش نشود'),
+  password: z.string().min(4, 'گذرواژه حداقل 4 رقم است')
 });
 
 const LoginPage = () => {

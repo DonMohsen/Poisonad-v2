@@ -7,12 +7,14 @@ interface MobileItemProps {
   icon: any;
   active?: boolean;
   onClick?: () => void;
+  label:string
 }
 
 const MobileItem: React.FC<MobileItemProps> = ({ 
   href, 
   icon: Icon, 
   active,
+  label,
   onClick
 }) => {
   const handleClick = () => {
@@ -34,14 +36,16 @@ const MobileItem: React.FC<MobileItemProps> = ({
         font-semibold 
         w-full 
         justify-center 
-        p-4 
+        py-2
+        px-4
         text-gray-500 
-        hover:text-black 
-        hover:bg-gray-100
+       
       `,
-        active && 'bg-gray-100 text-black',
       )}>
-      <Icon className="h-6 w-6" />
+        <div className="flex flex-col  items-center justify-center">
+      <Icon className={clsx(`h-6 w-6 text-[#64ce69] transition-all duration-200`,active? 'stroke-3':'stroke-1')} />
+        <p className={clsx(`text-black`,active? 'font-bold':'font-medium')}>{label}</p>
+        </div>
     </Link>
    );
 }

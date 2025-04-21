@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MobileFooter from "@/components/MobileFooter";
+import Header from "@/components/Header";
+import NavbarMenu from "@/components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,12 +28,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-        <MobileFooter/>
-      </body>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+  <div className="flex h-screen overflow-hidden">
+    {/* Sidebar - hidden on mobile */}
+    <div className="hidden lg:block">
+      <Sidebar />
+    </div>
+    
+    <div className="flex flex-col flex-1">
+      {/* Header - always visible */}
+      
+      <main className="flex-1 overflow-auto pt-4 pr-4">
+        {/* Rounded container - only on desktop */}
+        <div className="lg:rounded-t-2xl   h-full lg:bg-yellow-500 ">
+      <Header />
+          {children}
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  {/* Mobile footer - only on mobile */}
+    <MobileFooter />
+</body>
     </html>
   );
 }

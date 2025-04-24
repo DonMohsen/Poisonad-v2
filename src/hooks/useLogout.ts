@@ -1,7 +1,6 @@
 // hooks/useLogout.ts
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useToaster } from 'react-hot-toast';
 import useUserStore from '@/stores/useUserStore';
 import useReserveWithStartWeekStore from '@/stores/useReserveWithStartWeekStore';
 

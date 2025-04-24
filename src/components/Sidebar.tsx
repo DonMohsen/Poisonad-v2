@@ -14,7 +14,7 @@ export default function Sidebar() {
   // Your route configuration
 
   return (
-    <aside className={`h-full bg-white transition-all duration-300  ${
+    <aside className={`h-full bg-transparent transition-all duration-300   ${
       isCollapsed ? 'w-20' : 'w-64'
     }`}>
       <div className="p-4 h-full flex flex-col gap-2">

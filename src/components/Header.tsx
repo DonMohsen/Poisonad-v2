@@ -6,7 +6,7 @@ export default function Header() {
   const pathname = usePathname()
   
   return (
-    <header className="bg-transparent  p-4 flex items-center justify-between">
+    <header className="bg-black sticky top-0 rounded-md left-0  flex items-center justify-between">
       <h1 className="text-xl font-semibold">
         {pathname.split('/').pop() || 'New Project'}
       </h1>

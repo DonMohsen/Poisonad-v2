@@ -4,7 +4,7 @@ import { ReserveWithWeekStart } from '@/types/reserveWithWeekStart';
 import { ForgetCardCodeResponseType } from '@/types/forget-card-code.types';
 
 export const useForgetCardCodes = () => {
-  const [loading, setLoading] = useState(false); // Start as false
+  const [loading, setLoading] = useState(true); // Start as false
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ForgetCardCodeResponseType | null>(null);
   const router = useRouter();

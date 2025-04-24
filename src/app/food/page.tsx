@@ -11,6 +11,7 @@ import Modal from "@/components/ui/Modal";
 import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealType } from "@/types/forget-card-code.types";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
+import Header from "@/components/Header";
 
 export default function DashboardPage() {
   const { loading, error, data } = useUserInfo();
@@ -20,9 +21,9 @@ export default function DashboardPage() {
     error: reserveError,
     loading: reserveLoading,
   } = useReserveWithWeekStart();
-  const [reserveId, setReserveId] = useState<null|number>(null);
+  const [reserveId, setReserveId] = useState<null | number>(null);
   const [modalData, setModalData] = useState<null | MealTypeEntry>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const {
     loading: ForgetCardCodesLoading,
     error: ForgetCardCodesError,
@@ -35,19 +36,15 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-     modalData?.reserve.id&&
-     setReserveId(modalData.reserve.id)
-     
-  }, [modalData])
+    modalData?.reserve.id && setReserveId(modalData.reserve.id);
+  }, [modalData]);
   useEffect(() => {
-    reserveId&&
-    fetchForgetCardCodes(reserveId.toString())
-  }, [reserveId])
-  const handleModalOpened=(meal:MealTypeEntry)=>{
+    reserveId && fetchForgetCardCodes(reserveId.toString());
+  }, [reserveId]);
+  const handleModalOpened = (meal: MealTypeEntry) => {
     setIsModalOpen(true);
-    setModalData(meal)
-    
-  }
+    setModalData(meal);
+  };
   const handleLogout = async () => {
     const toastId = toast.loading("Logging out...");
     try {
@@ -71,7 +68,9 @@ export default function DashboardPage() {
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
+    <>
+    {/* <Header/> */}
+    <div className="container mx-auto p-4 min-h-[300vh] overflow-y-auto ">
       <Toaster position="top-center" />
 
       <div className="flex justify-between items-center mb-8">
@@ -126,19 +125,23 @@ export default function DashboardPage() {
         ))}
       </div>
       <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
-        {modalData&&reserveId&&ForgetCardCodesData?.foodName&&(
-          
-          <div className="flex items-center justify-center flex-col">
-            {modalData.reserve.foodNames}
-            {ForgetCardCodesLoading?
-            <div className="animate-pulse bg-slate-200 h-[200px] w-[200px] rounded-md shadow-lg mt-5"></div>:
-            <QRCodeBox value={ForgetCardCodesData.forgotCardCode}/>
-
-            }
-            <p>{ForgetCardCodesData.forgotCardCode}</p>
+        {ForgetCardCodesLoading ? (
+          <div className="animate-pulse bg-slate-200 h-[200px] w-[200px] rounded-md shadow-lg mt-5"></div>
+        ) : (
+          modalData &&
+          reserveId &&
+          ForgetCardCodesData?.foodName && (
+            <div className="flex items-center justify-center flex-col">
+              {modalData.reserve.foodNames}
+              {ForgetCardCodesLoading ? (
+                <div className="animate-pulse bg-slate-200 h-[200px] w-[200px] rounded-md shadow-lg mt-5"></div>
+              ) : (
+                <QRCodeBox value={ForgetCardCodesData.forgotCardCode} />
+              )}
+              <p>{ForgetCardCodesData.forgotCardCode}</p>
             </div>
+          )
         )}
-        
       </Modal>
       <div>
         {ForgetCardCodesError && <div className="error">{error}</div>}
@@ -152,5 +155,7 @@ export default function DashboardPage() {
         )}
       </div>
     </div>
+    </>
+
   );
 }

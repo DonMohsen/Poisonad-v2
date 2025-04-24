@@ -11,6 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+import { CustomToast } from '@/components/ui/CustomToast';
+import useUserStore from '@/stores/useUserStore';
 
 // Form validation schema
 const formSchema = z.object({
@@ -26,7 +28,7 @@ const LoginPage = () => {
     const accessToken=localStorage.getItem('bearerToken')
   accessToken&&router.replace('/food')
   }, [token])
-  
+
  
   // Form setup with validation
   const form = useForm<z.infer<typeof formSchema>>({
@@ -40,12 +42,10 @@ const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    let loadingToast: string | undefined;
     
     try {
       setIsSubmitting(true);
-      loadingToast = toast.loading('Signing in...');
-      
+    
       const response = await login(values.username, values.password);
       
       if (response?.access_token) {
@@ -54,13 +54,16 @@ const LoginPage = () => {
         console.log(response);
         
         setToken(response.access_token)
-
-        toast.success('Login successful! Redirecting...', { id: loadingToast });
-        router.push('/food');
+        toast.custom((t) => (
+          <CustomToast t={t} type="success" message="Item created successfully!" />
+        ));
+                router.push('/food');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
-      toast.error(errorMessage, { id: loadingToast });
+toast.custom((t) => (
+  <CustomToast t={t} type="error" message="Something went wrong!" />
+));
     } finally {
       setIsSubmitting(false);
     }
@@ -134,7 +137,7 @@ const LoginPage = () => {
       </Card>
       
       {/* Add the Toaster component at the root of your login page */}
-      <Toaster 
+      {/* <Toaster 
         position="top-center"
         toastOptions={{
           duration: 5000,
@@ -158,7 +161,7 @@ const LoginPage = () => {
             },
           },
         }}
-      />
+      /> */}
     </div>
   );
 };

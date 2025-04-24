@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { ReserveWithWeekStart } from '@/types/reserveWithWeekStart';
+import useReserveWithStartWeekStore from '@/stores/useReserveWithStartWeekStore';
 
 export const useReserveWithWeekStart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ReserveWithWeekStart|null>(null);
   const router = useRouter();
+  const setWeekData = useReserveWithStartWeekStore((state) => state.setWeekReserveData);
 
   const fetchreserveWithWeekStart = useCallback(async () => {
     try {
@@ -44,7 +46,9 @@ export const useReserveWithWeekStart = () => {
       if (!result?.payload) throw new Error('Invalid data format');
       
       setData(result.payload);
+      setWeekData(result.payload)
       console.log("The users/me results======>>>>>",result);
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {

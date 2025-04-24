@@ -35,7 +35,7 @@ interface NameDescriptionPair {
     lastName: string;
     username: string;
     fatherName: string;
-    gender: string;
+    gender: Gender;
     enabled: boolean;
     nationalCode: string;
     personnel: boolean;
@@ -53,7 +53,7 @@ interface NameDescriptionPair {
   }
   
   // Optional: Union type for gender if you know all possible values
-  export type Gender = 'مرد' | 'زن' | 'سایر'; // Add other possible values
+  export type Gender = 'مرد' | 'زن'; // Add other possible values
   
   // Optional: Type for date strings if you need to handle them specially
   export type PersianDateString = string; // Format: "YYYY-MM-DD HH:mm:ss"

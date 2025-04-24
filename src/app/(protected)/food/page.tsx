@@ -12,6 +12,8 @@ import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealType } from "@/types/forget-card-code.types";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
 import Header from "@/components/Header";
+import { CustomToast } from "@/components/ui/CustomToast";
+import useReserveWithStartWeekStore from "@/stores/useReserveWithStartWeekStore";
 
 export default function DashboardPage() {
   const { loading, error, data } = useUserInfo();
@@ -46,15 +48,15 @@ export default function DashboardPage() {
     setModalData(meal);
   };
   const handleLogout = async () => {
-    const toastId = toast.loading("Logging out...");
     try {
       await logout();
-      toast.success("Logged out successfully!", { id: toastId });
-    } catch (err) {
-      toast.error(
-        logoutError?.message || "Failed to logout. Please try again.",
-        { id: toastId }
-      );
+      toast.custom((t) => (
+        <CustomToast t={t} type="success" message="Item created successfully!" />
+      ));
+          } catch (err) {
+      toast.custom((t) => (
+        <CustomToast t={t} type="error" message="Something went wrong!" />
+      ));
     }
   };
 
@@ -70,8 +72,8 @@ export default function DashboardPage() {
   return (
     <>
     {/* <Header/> */}
-    <div className="container mx-auto p-4 min-h-[300vh] overflow-y-auto ">
-      <Toaster position="top-center" />
+    <div className="container mx-auto p-4 min-h-[300vh] overflow-y-auto bg-white ">
+      {/* <Toaster  position="top-center" /> */}
 
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">User Profile</h1>

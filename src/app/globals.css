@@ -1,2 +1,19 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* Thin scrollbar for WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 1px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+  }

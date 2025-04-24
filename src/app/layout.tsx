@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Vazirmatn } from "next/font/google";
 import "./globals.css";
 import MobileFooter from "@/components/MobileFooter";
 import Header from "@/components/Header";
-import NavbarMenu from "@/components/Sidebar";
 import Sidebar from "@/components/Sidebar";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,6 +14,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+const vazirMatn = Vazirmatn({
+  variable: "--font-vazir-matn",
+  subsets: ["latin", "arabic"],  // You can specify 'latin' and 'arabic' subsets if you need
+  weight: [
+    "100", "200", "300", "400", "500", "600", "700", "800", "900"
+  ],
 });
 
 export const metadata: Metadata = {
@@ -28,25 +35,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-<body className={`${geistSans.variable} ${geistMono.variable} antialiased `}>
+<body className={`${geistSans.variable} ${geistMono.variable} ${vazirMatn.className} antialiased bg-[#f2f0fd] `}>
+  {/* Toaster must go here */}
+  <Toaster
+    position="top-right"
+    toastOptions={{
+      duration: 4000,
+      style: {
+        zIndex: 9999,
+        background: '#333',
+        color: '#fff',
+      },
+    }}
+  />
+
   {/* Desktop View */}
   <div className="hidden lg:flex h-screen overflow-hidden">
-    {/* Sidebar - fixed */}
     <div className="w-64 fixed h-screen p-4">
       <Sidebar />
     </div>
 
-    {/* Right side: padded, scrollable inside, with fixed height */}
-    <div className="flex-1 ml-64 flex items-center justify-center p-4 ">
-      <div className=" rounded-xl w-full h-full overflow-hidden flex flex-col shadow-md drop-shadow-md">
-        {/* Scrollable inner area */}
+    <div className="flex-1 ml-64 flex items-center justify-center p-4">
+      <div className="rounded-2xl w-full h-full overflow-hidden flex flex-col shadow-md drop-shadow-md">
         <div className="flex-1 overflow-y-auto">
-          {/* Sticky header */}
-          <div className="sticky top-0 z-10  rounded-t-xl">
+          <div className="sticky top-0 rounded-2xl">
             <Header />
           </div>
-          {/* Content */}
-          <div className="">
+          <div>
             {children}
           </div>
         </div>
@@ -60,9 +75,9 @@ export default function RootLayout({
     {children}
   </div>
 
-  {/* Mobile Footer */}
   <MobileFooter />
 </body>
+
 
 
     </html>

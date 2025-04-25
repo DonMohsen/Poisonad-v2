@@ -22,7 +22,7 @@ export const useReserveWithWeekStart = () => {
       }
 
       // Directly fetch the external endpoint here
-      const res = await fetch('https://saba.nus.ac.ir/rest/reserves?weekStartDate=&selfType=NORMAL', {
+      const res = await fetch('https://saba.nus.ac.ir/rest/reserves?weekStartDate=2025-04-26+00:00:00&selfType=NORMAL', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

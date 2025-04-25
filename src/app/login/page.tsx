@@ -26,7 +26,7 @@ const LoginPage = () => {
   const { login } = useAuth();
   useEffect(() => {
     const accessToken=localStorage.getItem('bearerToken')
-  accessToken&&router.replace('/food')
+  accessToken&&router.replace('/')
   }, [token])
 
  
@@ -57,7 +57,7 @@ const LoginPage = () => {
         toast.custom((t) => (
           <CustomToast t={t} type="success" message="Item created successfully!" />
         ));
-                router.push('/food');
+                router.push('/');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
@@ -73,7 +73,7 @@ toast.custom((t) => (
     }, [])
     
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="flex items-center justify-center h-[635px]  bg-gradient-to-br from-gray-50 to-gray-100">
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>

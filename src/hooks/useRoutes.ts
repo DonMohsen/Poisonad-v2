@@ -8,13 +8,14 @@ const useRoutes = () => {
 
   const routes = useMemo(() => [
     { 
-      label: 'تغذیه', 
-      href: '/food', 
+      label: 'خانه', 
+      href: '/', 
       icon: UtensilsCrossed ,
-      active: pathname.startsWith('/food'),
+      active: pathname==='/',
     },
     { 
       label: 'گمشده', 
+      
       href: '/lost', 
       icon: ScanSearch, 
       active: pathname.startsWith('/lost'),

@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { CustomToast } from '@/components/ui/CustomToast';
 import useUserStore from '@/stores/useUserStore';
+import Image from 'next/image';
 
 // Form validation schema
 const formSchema = z.object({
@@ -55,14 +56,14 @@ const LoginPage = () => {
         
         setToken(response.access_token)
         toast.custom((t) => (
-          <CustomToast t={t} type="success" message="Item created successfully!" />
+          <CustomToast t={t} type="success" message=" ! ورود موفقیت آمیز" />
         ));
                 router.push('/');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
 toast.custom((t) => (
-  <CustomToast t={t} type="error" message="Something went wrong!" />
+  <CustomToast t={t} type="error" message="! ورود ناموفق" />
 ));
     } finally {
       setIsSubmitting(false);
@@ -73,12 +74,17 @@ toast.custom((t) => (
     }, [])
     
   return (
-    <div className="flex items-center justify-center h-[635px]  bg-gradient-to-br from-gray-50 to-gray-100">
-      <Card className="w-full max-w-md mx-4">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+    <div className="flex items-center justify-center h-[635px]  bg-transparent relative "
+    
+    >
+      <Image alt='backgroundImage' src="/back.jpg" width={1200} height={1200} className='absolute w-full h-full'/>
+      <Card
+      dir='rtl'
+      className="w-full max-w-md mx-4 z-50 bg-white/10 backdrop-blur-md border border-white/20 shadow-lg rounded-xl">
+      <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">سباد</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            سامانه  بی مدیریتی امور دانشجویی
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -89,10 +95,10 @@ toast.custom((t) => (
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>نام کاربری</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter your username"
+                        placeholder="نام کاربری را وارد نمایید"
                         autoComplete="username"
                         {...field}
                         disabled={isSubmitting}
@@ -107,11 +113,11 @@ toast.custom((t) => (
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className=''>رمز عبور</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Enter your password"
+                        placeholder="رمز عبور را وارد نمایید"
                         autoComplete="current-password"
                         {...field}
                         disabled={isSubmitting}
@@ -121,14 +127,14 @@ toast.custom((t) => (
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+              <Button type="submit" className="w-full border border-black/[0.2] bg-green-500 cursor-pointer hover:brightness-125" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    
                   </>
                 ) : (
-                  'Sign in'
+                  'ورود'
                 )}
               </Button>
             </form>
@@ -136,32 +142,7 @@ toast.custom((t) => (
         </CardContent>
       </Card>
       
-      {/* Add the Toaster component at the root of your login page */}
-      {/* <Toaster 
-        position="top-center"
-        toastOptions={{
-          duration: 5000,
-          style: {
-            background: '#fff',
-            color: '#000',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            borderRadius: '8px',
-            padding: '16px',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10B981',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#EF4444',
-              secondary: '#fff',
-            },
-          },
-        }}
-      /> */}
+
     </div>
   );
 };

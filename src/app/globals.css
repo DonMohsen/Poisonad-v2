@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@custom-variant dark (&:is(.dark*));
+
 /* Thin scrollbar for WebKit (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
     width: 1px;
@@ -17,3 +19,42 @@
     scrollbar-width: thin;
     scrollbar-color: #ccc transparent;
   }
+  .custom-bg {
+    position: relative;
+    background: linear-gradient(135deg, #215baf, #4f90d9);
+    overflow: hidden;
+  }
+  
+  .custom-bg::before,
+  .custom-bg::after {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: transparent;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .custom-bg::before {
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 70%
+    );
+    transform: rotate(25deg) scale(1.4);
+    filter: blur(20px);
+  }
+  
+  .custom-bg::after {
+    background: linear-gradient(
+      60deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
+    transform: rotate(-20deg) scale(1.2);
+    filter: blur(10px);
+  }
+  

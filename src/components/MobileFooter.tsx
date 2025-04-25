@@ -21,7 +21,7 @@ const MobileFooter = () => {
         flex 
         items-center 
         bg-white 
-      
+        dark:bg-amber-500
         shadow-2xl
         lg:hidden
       "

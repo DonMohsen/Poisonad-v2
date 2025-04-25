@@ -43,7 +43,7 @@ const MobileItem: React.FC<MobileItemProps> = ({
       `,
       )}>
         <div className="flex flex-col  items-center justify-center">
-      <Icon className={clsx(`h-6 w-6 text-[#64ce69] transition-all duration-200`,active? 'stroke-3':'stroke-1')} />
+      <Icon className={clsx(`h-6 w-6 text-[#64ce69] dark:text-blue-700 transition-all duration-200`,active? 'stroke-3':'stroke-1')} />
         <p className={clsx(`text-black text-[10px]`,active? 'font-bold':'font-medium')}>{label}</p>
         </div>
     </Link>

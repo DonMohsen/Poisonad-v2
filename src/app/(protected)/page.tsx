@@ -12,6 +12,7 @@ import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
 import { CustomToast } from "@/components/ui/CustomToast";
 import { convertToPersian } from "@/utils/convertToPersian";
+import UserModal from "@/components/ui/UserModal";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
@@ -44,18 +45,6 @@ export default function HomePage() {
   const handleModalOpened = (meal: MealTypeEntry) => {
     setIsModalOpen(true);
     setModalData(meal);
-  };
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.custom((t) => (
-        <CustomToast t={t} type="success" message="Item created successfully!" />
-      ));
-          } catch (err) {
-      toast.custom((t) => (
-        <CustomToast t={t} type="error" message="Something went wrong!" />
-      ));
-    }
   };
   const mealOrder = [ "صبحانه", "ناهار" ,"شام","افطاری","سحری"];
 
@@ -98,7 +87,7 @@ export default function HomePage() {
       <tr>
         <th className="border border-gray-300 bg-gray-100 p-2 sticky right-0">روز</th>
         {mealOrder.map((meal) => (
-          <th key={meal} className="border border-gray-300 bg-gray-100 p-2">
+          <th key={meal} className="border border-gray-300 bg-gray-100 dark:bg-purple-700 p-2">
             {meal}
           </th>
         ))}
@@ -128,7 +117,7 @@ export default function HomePage() {
                     <div
                     onClick={() => handleModalOpened(meal)}
 
-                    className="cursor-pointer w-full h-[40px] flex items-center justify-center transition-all duration-300 hover:bg-slate-200 rounded-xl">
+                    className="cursor-pointer w-full h-[40px] flex items-center  justify-center transition-all duration-300 hover:bg-slate-200 rounded-xl">
                       <CircleCheck className="w-6 h-6 fill-[#378039] text-white cursor-pointer" />
                       {meal.reserve.foodNames}
 

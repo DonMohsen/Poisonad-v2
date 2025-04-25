@@ -10,13 +10,13 @@ import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import Modal from "@/components/ui/Modal";
 import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
-import { CustomToast } from "@/components/ui/CustomToast";
 import { convertToPersian } from "@/utils/convertToPersian";
-import UserModal from "@/components/ui/UserModal";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
   const { logout, isLoading: isLoggingOut, error: logoutError } = useLogout();
+  const router=useRouter()
   const {
     data: reserveData,
     error: reserveError,
@@ -36,6 +36,7 @@ export default function HomePage() {
     setIsModalOpen(false);
   };
 
+  
   useEffect(() => {
     modalData?.reserve.id && setReserveId(modalData.reserve.id);
   }, [modalData]);
@@ -55,7 +56,9 @@ export default function HomePage() {
       </div>
     );
 
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (error)
+  {error.includes('40')&&router.push('/login')
+  }
 
   return (
     <>

@@ -148,7 +148,7 @@ export default function HomePage() {
     <div className="container mx-auto  min-h-[300vh] overflow-y-auto bg-white ">
     <div className="p-6 overflow-x-auto" dir="rtl">
   <h1 className="text-2xl font-bold mb-4 text-center">وضعیت رزرو</h1>
-  <div className="flex items-center justify-center gap-2 mb-5">
+  <div className="flex items-center justify-center gap-2 mb-2">
   <CircleChevronRight
   className='w-8 h-8 hover:fill-green-200 cursor-pointer'
    onClick={handlePrevWeek} />
@@ -159,6 +159,22 @@ export default function HomePage() {
   <CircleChevronLeft className='w-8 h-8 hover:fill-green-200 cursor-pointer'
   onClick={handleNextWeek} />
   </div>
+  {Math.abs(differenceInCalendarWeeks(
+    new Date(selectedWeekStart),
+    currentWeekSaturday
+  )) >= 2 && (
+    <div className="flex justify-center mt-2">
+      <Button 
+        variant="outline"
+        size="sm"
+        onClick={() => setSelectedWeekStart(format(currentWeekSaturday, 'yyyy-MM-dd'))}
+        className="text-sm px-4 py-1 cursor-pointer hover:bg-green-200 border border-black/[0.1] mb-3"
+      >
+        بازگشت به هفته جاری
+      </Button>
+    </div>
+  )}
+
   {reserveLoading?<TableSkeleton/>:
   (
 
@@ -224,7 +240,9 @@ export default function HomePage() {
                       <CircleMinus className="w-5 h-5 text-slate-500" />
                     )}
                   </p>
+                  
                 </div>
+                
                 
               </td>
               

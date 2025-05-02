@@ -1,4 +1,5 @@
 "use client";
+import { BsFillCheckCircleFill } from "react-icons/bs";
 import {
   format,
   addWeeks,
@@ -27,18 +28,20 @@ import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
 import { convertToPersian } from "@/utils/convertToPersian";
 import { useRouter } from "next/navigation";
-import TableSkeleton from "@/components/TableSkeleton";
+import TableSkeleton from "@/components/SkeletonTable";
+import SkeletonTable from "@/components/SkeletonTable";
+import FoodChart from "@/components/FoodChart";
+import useFoodPrograms from "@/hooks/useFoodPrograms";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
   const getStartOfWeek = (date: Date) => {
-    const dateCopy = new Date(date);
-    const day = dateCopy.getDay(); // 0 (Sun) to 6 (Sat)
-    // Calculate difference to previous Saturday
-    const diff = dateCopy.getDate() - day - 1; // -1 because Saturday is day 6
-    dateCopy.setDate(diff);
-    dateCopy.setHours(0, 0, 0, 0);
-    return dateCopy;
+    const day = date.getDay();
+    const diff = (day + 1) % 7; // Saturday = 6 → diff = 0, Sunday = 0 → diff = 1, etc.
+    const saturday = new Date(date);
+    saturday.setDate(saturday.getDate() - diff);
+    saturday.setHours(0, 0, 0, 0);
+    return saturday;
   };
 
   // Helper to get the end of week (Friday)
@@ -56,12 +59,6 @@ export default function HomePage() {
     format(currentWeekSaturday, "yyyy-MM-dd")
   );
 
-  // Automatically fetches when `selectedWeekStart` changes
-  const {
-    data: reserveData,
-    error: reserveError,
-    loading: reserveLoading,
-  } = useReserveWithWeekStart(selectedWeekStart);
   const router = useRouter();
 
   // Calculate relative week label (in Persian)
@@ -83,13 +80,6 @@ export default function HomePage() {
     return format(selectedDate, "MMMM d, yyyy");
   }, [selectedWeekStart, currentWeekSaturday]);
 
-  // Get formatted week range (Saturday to Friday)
-  const weekRangeLabel = useMemo(() => {
-    const startDate = new Date(selectedWeekStart);
-    const endDate = getEndOfWeek(startDate);
-    return `${format(startDate, "d MMM")} تا ${format(endDate, "d MMM")}`;
-  }, [selectedWeekStart]);
-
   // Navigation handlers
   const handleNextWeek = () => {
     const nextWeek = addDays(new Date(selectedWeekStart), 7);
@@ -100,6 +90,11 @@ export default function HomePage() {
     const prevWeek = addDays(new Date(selectedWeekStart), -7);
     setSelectedWeekStart(format(prevWeek, "yyyy-MM-dd"));
   };
+  const {
+    data: foodData,
+    error: foodError,
+    loading: foodLoading,
+  } = useFoodPrograms(104, selectedWeekStart);
 
   const [reserveId, setReserveId] = useState<null | number>(null);
   const [modalData, setModalData] = useState<null | MealTypeEntry>(null);
@@ -125,7 +120,6 @@ export default function HomePage() {
     setIsModalOpen(true);
     setModalData(meal);
   };
-  const mealOrder = ["صبحانه", "ناهار", "شام", "افطاری", "سحری"];
 
   if (loading)
     return (
@@ -137,6 +131,8 @@ export default function HomePage() {
   if (error) {
     error.includes("40") && router.push("/login");
   }
+
+
 
   return (
     <>
@@ -159,143 +155,53 @@ export default function HomePage() {
           )
         )}
       </Modal>
+      <div className="flex flex-col items-center justify-center gap-2 mb-4">
+        <div className="flex items-center justify-center gap-2">
+          <CircleChevronLeft
+            className="w-8 h-8 hover:fill-green-200 cursor-pointer"
+            onClick={handleNextWeek}
+          />
+
+          <h2 className="font-bold" dir="rtl">
+            {weekLabel}
+          </h2>
+
+          <CircleChevronRight
+            className="w-8 h-8 hover:fill-green-200 cursor-pointer"
+            onClick={handlePrevWeek}
+          />
+        </div>
+      
+
+        {Math.abs(
+          differenceInCalendarWeeks(
+            new Date(selectedWeekStart),
+            currentWeekSaturday
+          )
+        ) > 1 && (
+          <Button
+            onClick={() =>
+              setSelectedWeekStart(format(currentWeekSaturday, "yyyy-MM-dd"))
+            }
+            className="mt-1"
+            variant="outline"
+          >
+            بازگشت به این هفته
+          </Button>
+        )}
+      </div>
+
       {/* <Header/> */}
       <div className="container mx-auto  min-h-[300vh] overflow-y-auto bg-white ">
-        <div className="p-6 overflow-x-auto" dir="rtl">
-          <h1 className="text-3xl font-extrabold mb-4 text-center">وضعیت رزرو</h1>
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <CircleChevronRight
-              className="w-8 h-8 hover:fill-green-200 cursor-pointer"
-              onClick={handlePrevWeek}
-            />
-
-            <h2 className="font-bold">{weekLabel}</h2>
-            <CircleChevronLeft
-              className="w-8 h-8 hover:fill-green-200 cursor-pointer"
-              onClick={handleNextWeek}
-            />
-          </div>
-          {Math.abs(
-            differenceInCalendarWeeks(
-              new Date(selectedWeekStart),
-              currentWeekSaturday
-            )
-          ) >= 2 && (
-            <div className="flex justify-center mt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setSelectedWeekStart(
-                    format(currentWeekSaturday, "yyyy-MM-dd")
-                  )
-                }
-                className="text-sm px-4 py-1 cursor-pointer hover:bg-green-200 border border-black/[0.1] mb-3"
-              >
-                بازگشت به هفته جاری
-              </Button>
-            </div>
-          )}
-
-          {reserveLoading ? (
+        <div className="container mx-auto min-h-[300vh] overflow-y-auto bg-white">
+          {foodLoading ? (
             <TableSkeleton />
+          ) : foodData && foodData.payload.selfWeekPrograms ? (
+            <FoodChart data={foodData} />
           ) : (
-            <table className="min-w-full border border-gray-300 text-center text-sm">
-              <thead>
-                <tr>
-                  <th className="border border-gray-300 min-h-5 max-h-5 bg-gray-100  p-2 sticky right-0">
-                    روز
-                  </th>
-                  {mealOrder.map((meal) => (
-                    <th
-                      key={meal}
-                      className="border min-h-5 max-h-5 border-gray-300 max-w-10 bg-gray-100 dark:bg-purple-700 p-2"
-                    >
-                      {meal}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {reserveData?.weekDays.map((day, index) => {
-                  const isToday =
-                    format(new Date(day.date), "yyyy-MM-dd") ===
-                    format(today, "yyyy-MM-dd");
-
-                  return (
-                    <tr
-                      key={day.date}
-                      className={isToday ? "bg-yellow-50" : ""}
-                    >
-                      {/* Day cell */}
-                      <td
-                        className={`border min-h-5 max-h-5 border-gray-300 max-w-10 font-bold p-2 sticky right-0 ${
-                          isToday
-                            ? "bg-yellow-100"
-                            : index % 2 === 0
-                            ? "bg-gray-50"
-                            : "bg-gray-100"
-                        }`}
-                      >
-                        {day.dayTranslated} <br />
-                        <span
-                          className={`text-xs ${
-                            isToday ? "text-yellow-800" : "text-gray-500"
-                          }`}
-                        >
-                          {convertToPersian(day.dateJStr)}
-                        </span>
-                      </td>
-
-                      {/* Meal cells with alternating colors */}
-                      {mealOrder.map((mealName) => {
-                        const meal = day?.mealTypes?.find(
-                          (m) => m.name === mealName
-                        );
-                        return (
-                          <td
-                            key={mealName}
-                            className={`border max-w-10 min-h-5 max-h-5 border-gray-300 m-0 ${
-                              isToday
-                                ? "bg-yellow-50"
-                                : index % 2 === 0
-                                ? "bg-slate-50"
-                                : "bg-slate-100"
-                            }`}
-                          >
-                            <div className="w-full h-full  rounded text-xs">
-                              <div className="max-md:hidden">
-                                {meal?.reserve.foodNames ? (
-                                  <div
-                                    onClick={() => handleModalOpened(meal)}
-                                    className="cursor-pointer w-full h-[60px] flex items-center  justify-center transition-all duration-300 hover:bg-slate-200"
-                                  >
-                                    <CircleCheck className="w-6 h-6 fill-[#378039] text-white cursor-pointer" />
-                                    {meal.reserve.foodNames}
-                                  </div>
-                                ) : (
-                                  <div></div>
-                                )}
-                              </div>
-                              <p className="md:hidden flex items-center justify-center">
-                                {meal?.reserve?.foodNames ? (
-                                  <CircleCheck
-                                    onClick={() => handleModalOpened(meal)}
-                                    className="w-6 h-6 fill-[#378039] text-white cursor-pointer"
-                                  />
-                                ) : (
-                                  <CircleMinus className="w-5 h-5 text-slate-500" />
-                                )}
-                              </p>
-                            </div>
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div className="text-center py-10 text-gray-500">
+              اطلاعاتی برای این هفته یافت نشد.
+            </div>
           )}
         </div>
       </div>

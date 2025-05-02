@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { ReserveWithWeekStart } from '@/types/reserveWithWeekStart';
 import useReserveWithStartWeekStore from '@/stores/useReserveWithStartWeekStore';
 
-export const useReserveWithWeekStart = () => {
+export const useReserveWithWeekStart = (weekStartDate: string) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ReserveWithWeekStart|null>(null);
@@ -21,17 +21,14 @@ export const useReserveWithWeekStart = () => {
         return;
       }
 
-      // Directly fetch the external endpoint here
-      const res = await fetch('https://saba.nus.ac.ir/rest/reserves?weekStartDate=2025-04-26+00:00:00&selfType=NORMAL', {
+      // Use the provided weekStartDate parameter
+      const res = await fetch(`https://saba.nus.ac.ir/rest/reserves?weekStartDate=${encodeURIComponent(weekStartDate)}+00:00:00&selfType=NORMAL`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache, no-store, must-revalidate',
-
         },
-        // If SSL bypass is needed in development mode, you can do it like this:
-        // agent: new https.Agent({ rejectUnauthorized: false })
       });
 
       if (!res.ok) {
@@ -46,20 +43,21 @@ export const useReserveWithWeekStart = () => {
       if (!result?.payload) throw new Error('Invalid data format');
       
       setData(result.payload);
-      setWeekData(result.payload)
-      console.log("The users/me results======>>>>>",result);
+      setWeekData(result.payload);
+      console.log("The reserves results======>>>>>", result);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
-      
     }
-  }, [router]);
+  }, [router, weekStartDate]); // Add weekStartDate to dependencies
 
   useEffect(() => {
-    fetchreserveWithWeekStart();
-  }, [fetchreserveWithWeekStart]);
+    if (weekStartDate) {
+      fetchreserveWithWeekStart();
+    }
+  }, [fetchreserveWithWeekStart, weekStartDate]); // Add weekStartDate to dependencies
 
   return { loading, error, data, refetch: fetchreserveWithWeekStart };
 };

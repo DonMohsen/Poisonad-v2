@@ -1,7 +1,7 @@
 import React from 'react';
 
 const FoodChartSkeleton = () => {
-  const persianDays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+  const persianDays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه'];
   const mealTypes = [
     { id: 7, name: 'ناهار', disPriority: 1 },
     { id: 8, name: 'شام', disPriority: 2 },

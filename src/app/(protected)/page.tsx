@@ -10,7 +10,7 @@ import {
 
 import { useLogout } from "@/hooks/useLogout";
 import { useUserInfo } from "@/hooks/useUserInfo";
-import { Button } from "@/components/ui/button"; // Assuming you're using shadcn/ui
+import { Button } from "@/components/ui/button";
 import {
   CircleCheck,
   CircleChevronLeft,
@@ -23,7 +23,6 @@ import {
 import { useReserveWithWeekStart } from "@/hooks/useReserveWithWeekStart";
 import { useEffect, useMemo, useState } from "react";
 import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
-import Modal from "@/components/ui/Modal";
 import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
 import { convertToPersian } from "@/utils/convertToPersian";
@@ -32,40 +31,34 @@ import TableSkeleton from "@/components/SkeletonTable";
 import SkeletonTable from "@/components/SkeletonTable";
 import FoodChart from "@/components/FoodChart";
 import useFoodPrograms from "@/hooks/useFoodPrograms";
+import Modal from "@/components/ui/Modal";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
+  
+  // Improved week start calculation
   const getStartOfWeek = (date: Date) => {
-    const day = date.getDay();
-    const diff = (day + 1) % 7; // Saturday = 6 → diff = 0, Sunday = 0 → diff = 1, etc.
+    const day = date.getDay(); // 0 (Sunday) to 6 (Saturday)
+    // Calculate days to subtract to get to Saturday (start of Persian week)
+    const diff = (day + 1) % 7; // Saturday (6) → 0, Sunday (0) → 1, etc.
     const saturday = new Date(date);
     saturday.setDate(saturday.getDate() - diff);
     saturday.setHours(0, 0, 0, 0);
     return saturday;
   };
 
-  // Helper to get the end of week (Friday)
-  const getEndOfWeek = (date: Date) => {
-    const endDate = new Date(date);
-    endDate.setDate(endDate.getDate() + 6); // Add 6 days to Saturday to get Friday
-    return endDate;
-  };
-
   const today = new Date();
   const currentWeekSaturday = getStartOfWeek(today);
 
-  // Initialize with the current week's Saturday
-  const [selectedWeekStart, setSelectedWeekStart] = useState<string>(
-    format(currentWeekSaturday, "yyyy-MM-dd")
-  );
+  // Store as Date object instead of string
+  const [selectedWeekStart, setSelectedWeekStart] = useState<Date>(currentWeekSaturday);
 
   const router = useRouter();
 
   // Calculate relative week label (in Persian)
   const weekLabel = useMemo(() => {
-    const selectedDate = new Date(selectedWeekStart);
     const weekDiff = differenceInCalendarWeeks(
-      selectedDate,
+      selectedWeekStart,
       currentWeekSaturday
     );
 
@@ -77,24 +70,34 @@ export default function HomePage() {
     if (weekDiff < -1)
       return `${convertToPersian(Math.abs(weekDiff).toString())} هفته قبل`;
 
-    return format(selectedDate, "MMMM d, yyyy");
+    return format(selectedWeekStart, "MMMM d, yyyy");
   }, [selectedWeekStart, currentWeekSaturday]);
 
-  // Navigation handlers
+  // Fixed navigation handlers
   const handleNextWeek = () => {
-    const nextWeek = addDays(new Date(selectedWeekStart), 7);
-    setSelectedWeekStart(format(nextWeek, "yyyy-MM-dd"));
+    setSelectedWeekStart(prev => {
+      const nextWeek = new Date(prev);
+      nextWeek.setDate(nextWeek.getDate() + 7); // Always add exactly 7 days
+      return nextWeek;
+    });
   };
 
   const handlePrevWeek = () => {
-    const prevWeek = addDays(new Date(selectedWeekStart), -7);
-    setSelectedWeekStart(format(prevWeek, "yyyy-MM-dd"));
+    setSelectedWeekStart(prev => {
+      const prevWeek = new Date(prev);
+      prevWeek.setDate(prevWeek.getDate() - 7); // Always subtract exactly 7 days
+      return prevWeek;
+    });
   };
+
+  // Format for API only when needed
+  const apiFormattedDate = format(selectedWeekStart, "yyyy-MM-dd");
+
   const {
     data: foodData,
     error: foodError,
     loading: foodLoading,
-  } = useFoodPrograms(104, selectedWeekStart);
+  } = useFoodPrograms(104, apiFormattedDate);
 
   const [reserveId, setReserveId] = useState<null | number>(null);
   const [modalData, setModalData] = useState<null | MealTypeEntry>(null);
@@ -113,9 +116,11 @@ export default function HomePage() {
   useEffect(() => {
     modalData?.reserve.id && setReserveId(modalData.reserve.id);
   }, [modalData]);
+  
   useEffect(() => {
     reserveId && fetchForgetCardCodes(reserveId.toString());
   }, [reserveId]);
+  
   const handleModalOpened = (meal: MealTypeEntry) => {
     setIsModalOpen(true);
     setModalData(meal);
@@ -132,11 +137,9 @@ export default function HomePage() {
     error.includes("40") && router.push("/login");
   }
 
-
-
   return (
     <>
-      <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
+     <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
         {ForgetCardCodesLoading ? (
           <div className="animate-pulse bg-slate-200 h-[200px] w-[200px] rounded-md shadow-lg mt-5"></div>
         ) : (
@@ -171,18 +174,15 @@ export default function HomePage() {
             onClick={handlePrevWeek}
           />
         </div>
-      
-
+        
         {Math.abs(
           differenceInCalendarWeeks(
-            new Date(selectedWeekStart),
+            selectedWeekStart,
             currentWeekSaturday
           )
         ) > 1 && (
           <Button
-            onClick={() =>
-              setSelectedWeekStart(format(currentWeekSaturday, "yyyy-MM-dd"))
-            }
+            onClick={() => setSelectedWeekStart(currentWeekSaturday)}
             className="mt-1"
             variant="outline"
           >
@@ -191,8 +191,7 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* <Header/> */}
-      <div className="container mx-auto  min-h-[300vh] overflow-y-auto bg-white ">
+      <div className="container mx-auto min-h-[300vh] overflow-y-auto bg-white">
         <div className="container mx-auto min-h-[300vh] overflow-y-auto bg-white">
           {foodLoading ? (
             <TableSkeleton />

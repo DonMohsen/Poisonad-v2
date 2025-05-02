@@ -50,7 +50,7 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
     const jalaaliDate = jalaali.toJalaali(
       date.getFullYear(),
       date.getMonth() + 1,
-      date.getDate() + 1
+      date.getDate()
     );
     return `${jalaaliDate.jy}/${jalaaliDate.jm
       .toString()

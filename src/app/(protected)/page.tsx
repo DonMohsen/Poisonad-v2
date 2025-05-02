@@ -1,11 +1,14 @@
 "use client";
 import { BsFillCheckCircleFill } from "react-icons/bs";
+import * as jalaali from 'jalaali-js'; // Add this import at the top
+
 import {
   format,
   addWeeks,
   subWeeks,
   differenceInCalendarWeeks,
   addDays,
+  
 } from "date-fns";
 
 import { useLogout } from "@/hooks/useLogout";
@@ -32,6 +35,9 @@ import SkeletonTable from "@/components/SkeletonTable";
 import FoodChart from "@/components/FoodChart";
 import useFoodPrograms from "@/hooks/useFoodPrograms";
 import Modal from "@/components/ui/Modal";
+import { FoodProgramResponse } from "@/types/food-response-types";
+import { toJalaali } from "jalaali-js";
+import { getPersianWeekRange } from "@/utils/getPersianWeekRange";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
@@ -136,6 +142,32 @@ export default function HomePage() {
   if (error) {
     error.includes("40") && router.push("/login");
   }
+  const getWeekRangeFromData = (foodData: FoodProgramResponse | undefined) => {
+    if (!foodData?.payload?.selfWeekPrograms) return '';
+  
+    const days = foodData.payload.selfWeekPrograms;
+    if (days.length === 0) return '';
+  
+    // Get first day (Saturday)
+    const firstDay = days[0][0]?.date;
+    // Get last day (Friday) - last meal of last day
+    const lastDay = days[days.length - 1][0]?.date;
+  
+    if (!firstDay || !lastDay) return '';
+  
+    // Format dates as "DD/MM" in Persian
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      const jalaaliDate = jalaali.toJalaali(date);
+      return `${jalaaliDate.jd.toString().padStart(2, '۰')}/${jalaaliDate.jm.toString().padStart(2, '۰')}`;
+    };
+  
+    const firstFormatted = formatDate(firstDay);
+    const lastFormatted = formatDate(lastDay);
+  
+    return `${firstFormatted} تا ${lastFormatted}`;
+  };
+  const weekRange = getPersianWeekRange(selectedWeekStart);
 
   return (
     <>
@@ -168,12 +200,17 @@ export default function HomePage() {
           <h2 className="font-bold" dir="rtl">
             {weekLabel}
           </h2>
-
           <CircleChevronRight
             className="w-8 h-8 hover:fill-green-200 cursor-pointer"
             onClick={handlePrevWeek}
-          />
+            />
+          
         </div>
+            {foodData && (
+            <div className="text-sm text-gray-600 mb-2" dir="rtl" >
+              {weekRange}
+            </div>
+          )}
         
         {Math.abs(
           differenceInCalendarWeeks(
@@ -183,7 +220,7 @@ export default function HomePage() {
         ) > 1 && (
           <Button
             onClick={() => setSelectedWeekStart(currentWeekSaturday)}
-            className="mt-1"
+            className="mt-1 hover:bg-green-100 cursor-pointer transition-all duration-300"
             variant="outline"
           >
             بازگشت به این هفته

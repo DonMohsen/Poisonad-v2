@@ -57,6 +57,17 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
       .padStart(2, "0")}/${jalaaliDate.jd.toString().padStart(2, "0")}`;
   };
 
+  // Check if a date is today
+  const isToday = (dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
+  };
+
   return (
     <>
       <Modal open={isModalOpen} onClose={closeQRModal}>
@@ -92,62 +103,66 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
             </tr>
           </thead>
           <tbody>
-            {data.payload.selfWeekPrograms.map((dayMeals, dayIndex) => (
-              <tr key={dayIndex}>
-                <td className="border border-gray-300 text-center align-middle py-4 bg-gray-50 font-medium">
-                  <div>{persianDays[dayIndex]}</div>
-                  <div className="text-[10px] text-gray-600">
-                    {getPersianDate(dayMeals[0]?.date || new Date().toString())}
-                  </div>
-                </td>
+            {data.payload.selfWeekPrograms.map((dayMeals, dayIndex) => {
+              const today = dayMeals.some(meal => isToday(meal.date));
+              return (
+                <tr key={dayIndex} className={""}>
+                  <td className={`border border-gray-300 text-center align-middle py-4 ${today ? "bg-yellow-100 font-bold" : "bg-gray-50"} font-medium`}>
+                    <div>{persianDays[dayIndex]}</div>
+                    <div className="text-[10px] text-gray-600">
+                      {getPersianDate(dayMeals[0]?.date || new Date().toString())}
+                    </div>
+                  </td>
 
-                {mealTypes.map((mealType) => {
-                  const meal = dayMeals.find(
-                    (m) => m.mealTypeId === mealType.id
-                  );
-                  const reserve = meal ? reserveMap.get(meal.programId) : null;
-                  const isReserved = !!reserve;
-                  const isConsumed = reserve?.consumed;
+                  {mealTypes.map((mealType) => {
+                    const meal = dayMeals.find(
+                      (m) => m.mealTypeId === mealType.id
+                    );
+                    const reserve = meal ? reserveMap.get(meal.programId) : null;
+                    const isReserved = !!reserve;
+                    const isConsumed = reserve?.consumed;
 
-                  return (
-                    <td
-                      key={`${dayIndex}-${mealType.id}`}
-                      className={`border border-gray-300 text-center align-middle py-4 max-md:text-[10px] text-[12px] ${
-                        isConsumed
-                          ? "bg-orange-50 cursor-pointer hover:bg-orange-100"
-                          : isReserved
-                          ? "bg-green-50 cursor-pointer hover:bg-green-100"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        if (reserve) {
-                          setSelectedReserve(reserve);
-                          setIsModalOpen(true);
-                        }
-                      }}
-                    >
-                      {meal && (
-                        <div className="leading-tight space-y-1 px-1">
-                          <div className="font-medium line-clamp-2">
-                            {meal.foodName}
+                    return (
+                      <td
+                        key={`${dayIndex}-${mealType.id}`}
+                        className={`border border-gray-300 text-center align-middle py-4 max-md:text-[10px] text-[12px] ${
+                          
+                          isConsumed
+                            ? "bg-orange-50 cursor-pointer hover:bg-orange-100"
+                            : isReserved
+                            ? "bg-green-50 cursor-pointer hover:bg-green-100"
+                            :""
+                        }`}
+                        onClick={() => {
+                          if (reserve) {
+                            setSelectedReserve(reserve);
+                            setIsModalOpen(true);
+                          }
+                        }}
+                      >
+                        {meal && (
+                          <div className="leading-tight space-y-1 px-1">
+                            <div className="font-medium line-clamp-2">
+                              {meal.foodName}
+                            </div>
+                            {isConsumed && (
+                              <div className="text-xs text-orange-600">
+                                مصرف شده
+                              </div>
+                            )}
+                            {isReserved && !isConsumed && (
+                              <div className="text-xs text-green-600">
+                                رزرو شده
+                              </div>
+                            )}
                           </div>
-                          {isConsumed && (
-                            <div className="text-xs text-orange-600">
-                              مصرف شده
-                            </div>
-                          )}
-                          {isReserved && !isConsumed && (
-                            <div className="text-xs text-green-600">
-                              رزرو شده
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

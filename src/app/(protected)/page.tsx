@@ -198,6 +198,7 @@ export default function HomePage() {
           />
 
           <h2 className="font-bold" dir="rtl">
+            
             {weekLabel}
           </h2>
           <CircleChevronRight

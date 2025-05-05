@@ -2,6 +2,7 @@ import { FoodProgramResponse } from "@/types/food-response-types";
 import React, { useState, useMemo } from "react";
 import jalaali from "jalaali-js";
 import Modal from "./ui/Modal";
+import QRCodeBox from "./ui/QRCodeBox";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
   const [selectedReserve, setSelectedReserve] = useState<
@@ -70,10 +71,10 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
 
   return (
     <>
-      <Modal open={isModalOpen} onClose={closeQRModal}>
+      <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
         {selectedReserve && (
           <div>
-            <p>Reserve ID: {selectedReserve.id}</p>
+            <div>Reserve ID: <QRCodeBox value={selectedReserve.id.toString()}/></div>
             <p>Food: {selectedReserve.foodNames}</p>
             <p>Date: {selectedReserve.programDateStr}</p>
             <p>Status: {selectedReserve.consumed ? "مصرف شده" : "رزرو شده"}</p>

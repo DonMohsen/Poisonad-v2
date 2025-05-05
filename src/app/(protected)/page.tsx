@@ -114,7 +114,6 @@ export default function HomePage() {
     data: ForgetCardCodesData,
     fetchForgetCardCodes,
   } = useForgetCardCodes();
-
   const closeQRModal = () => {
     setIsModalOpen(false);
   };
@@ -190,7 +189,7 @@ export default function HomePage() {
           )
         )}
       </Modal>
-      <div className="flex flex-col items-center justify-center gap-2 mb-4">
+      <div className="flex flex-col items-center justify-center gap-2 bg-white">
         <div className="flex items-center justify-center gap-2">
           <CircleChevronLeft
             className="w-8 h-8 hover:fill-green-200 cursor-pointer"

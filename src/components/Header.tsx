@@ -24,7 +24,8 @@ export default function Header() {
     const WeekReserveData = useReserveWithStartWeekStore((state) => state.weekReserveData);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false)
  
-    const handleLogout = async () => {
+    const handleLogout = async () => { 
+      
       try {
         await logout();
         toast.custom((t) => (

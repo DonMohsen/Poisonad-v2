@@ -25,6 +25,7 @@ const useFoodPrograms = (selfId: number, date: string) => {
                 headers: {
                   Accept: "application/json",
                   Authorization: `Bearer ${token}`,
+                  'Cache-Control': 'no-cache, no-store, must-revalidate',
                 },
               }
             );

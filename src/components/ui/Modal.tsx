@@ -13,7 +13,7 @@ type ModalProps = {
 export default function Modal({ open, onClose, children, title }: ModalProps) {
   return (
     <Transition appear show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-50 " onClose={onClose}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-200"
@@ -36,15 +36,21 @@ export default function Modal({ open, onClose, children, title }: ModalProps) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-center shadow-xl transition-all">
-              {title && <Dialog.Title className="text-lg font-semibold mb-4">{title}</Dialog.Title>}
-              {children}
-              <button
-                onClick={onClose}
-                className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Close
-              </button>
+            <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white text-center shadow-xl transition-all">
+              {title && (
+                <Dialog.Title className="text-lg font-semibold text-white bg-green-600 p-4">
+                  {title}
+                </Dialog.Title>
+              )}
+              <div className="p-6">
+                {children}
+                <button
+                  onClick={onClose}
+                  className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Close
+                </button>
+              </div>
             </Dialog.Panel>
           </Transition.Child>
         </div>

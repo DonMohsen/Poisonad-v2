@@ -2,8 +2,7 @@
 import FoodChart from '@/components/FoodChart';
 import useFoodPrograms from '@/hooks/useFoodPrograms';
 import { FoodProgramResponse } from '@/types/food-response-types';
-import { convertToPersian } from '@/utils/convertToPersian';
-import { formatNumberWithCommas } from '@/utils/formatNumber';
+import { formatNumberWithCommas } from '@/lib/utils/formatNumber';
 import React from 'react';
 
 const WeeklyFoodTable = () => {

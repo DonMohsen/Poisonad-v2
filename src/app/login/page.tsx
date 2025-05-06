@@ -52,7 +52,7 @@ const LoginPage = () => {
       if (response?.access_token) {
         localStorage.setItem("bearerToken", response.access_token);
         localStorage.setItem("refreshToken",response.refresh_token)
-        console.log(response);
+        // console.log(response);
         
         setToken(response.access_token)
         toast.custom((t) => (

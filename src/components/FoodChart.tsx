@@ -5,6 +5,7 @@ import Modal from "./ui/Modal";
 import QRCodeBox from "./ui/QRCodeBox";
 import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import { QRCodeBoxSkeleton } from "./ui/QRCodeBoxSkeleton";
+import { convertToPersianDate, convertToPersianNumber } from "@/lib/utils/convertToPersian";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
   const [reserveId, setReserveId] = useState<string|null>(null)
@@ -69,24 +70,29 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
       date.getDate() === today.getDate()
     );
   };
-useEffect(() => {
-  reserveId!==null&&fetchForgetCardCodes(reserveId)
-}, [reserveId])
+// useEffect(() => {
+//   reserveId!==null&&fetchForgetCardCodes(reserveId)
+
+// }, [reserveId])
+console.log(selectedReserve);
 
   return (
     <>
-      <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
-        {selectedReserve && (
+    {selectedReserve&&
+      <Modal open={isModalOpen} onClose={closeQRModal} title={`${ForgetCardCodesData?.meal} ${convertToPersianNumber(convertToPersianDate(selectedReserve?.programDate))}`} titleLoading={!!ForgetCardCodesLoading}>
+      
           <div>
             {/* <div>Reserve ID:</div> */}
-            <p>Food: {selectedReserve.foodNames}</p>
-            <p>Date: {selectedReserve.programDateStr}</p>
+          {selectedReserve.foodNames}
+            {/* <p>Date: {selectedReserve.programDateStr}</p> */}
+            {/* <p>{selectedReserve.}</p> */}
             <p>Status: {selectedReserve.consumed ? "مصرف شده" : "رزرو شده"}</p>
             
             {ForgetCardCodesLoading?<QRCodeBoxSkeleton/>:ForgetCardCodesData?<QRCodeBox value={ForgetCardCodesData?.forgotCardCode}/>:"خطای نامشخص"}
           </div>
-        )}
+        
       </Modal>
+      }
 
       <div className="overflow-x-auto text-[14px]" dir="rtl">
         <table className="w-full border border-gray-300 max-md:text-[10px] table-fixed">
@@ -145,6 +151,7 @@ useEffect(() => {
                             setReserveId(reserve.id.toString())
                             setSelectedReserve(reserve);
                             setIsModalOpen(true);
+                            fetchForgetCardCodes(reserve.id.toString())
                           }
                         }}
                       >

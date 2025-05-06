@@ -28,7 +28,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
-import { convertToPersian } from "@/utils/convertToPersian";
 import { useRouter } from "next/navigation";
 import TableSkeleton from "@/components/SkeletonTable";
 import SkeletonTable from "@/components/SkeletonTable";
@@ -37,7 +36,8 @@ import useFoodPrograms from "@/hooks/useFoodPrograms";
 import Modal from "@/components/ui/Modal";
 import { FoodProgramResponse } from "@/types/food-response-types";
 import { toJalaali } from "jalaali-js";
-import { getPersianWeekRange } from "@/utils/getPersianWeekRange";
+import { getPersianWeekRange } from "@/lib/utils/getPersianWeekRange";
+import { convertToPersianNumber } from "@/lib/utils/convertToPersian";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
@@ -72,9 +72,9 @@ export default function HomePage() {
     if (weekDiff === 1) return "هفته بعد";
     if (weekDiff === -1) return "هفته قبل";
     if (weekDiff > 1)
-      return `${convertToPersian(weekDiff.toString())} هفته بعد`;
+      return `${convertToPersianNumber(weekDiff.toString())} هفته بعد`;
     if (weekDiff < -1)
-      return `${convertToPersian(Math.abs(weekDiff).toString())} هفته قبل`;
+      return `${convertToPersianNumber(Math.abs(weekDiff).toString())} هفته قبل`;
 
     return format(selectedWeekStart, "MMMM d, yyyy");
   }, [selectedWeekStart, currentWeekSaturday]);
@@ -170,7 +170,7 @@ export default function HomePage() {
 
   return (
     <>
-     <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
+     {/* <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
         {ForgetCardCodesLoading ? (
           <div className="animate-pulse bg-slate-200 h-[200px] w-[200px] rounded-md shadow-lg mt-5"></div>
         ) : (
@@ -188,7 +188,7 @@ export default function HomePage() {
             </div>
           )
         )}
-      </Modal>
+      </Modal> */}
       <div className="flex flex-col items-center justify-center gap-2 bg-white">
         <div className="flex items-center justify-center gap-2">
           <CircleChevronLeft

@@ -47,7 +47,7 @@ export const useUserInfo = () => {
       
       setData(result.payload);
       setUser(result.payload)
-      console.log("The users/me results======>>>>>",result);
+      // console.log("The users/me results======>>>>>",result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {

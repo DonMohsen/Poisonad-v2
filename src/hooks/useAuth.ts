@@ -35,7 +35,7 @@ const useAuth = () => {
 
       const responseData = await res.json();
       setData(responseData);
-      console.log("the res of auth======>>>>",responseData);
+      // console.log("the res of auth======>>>>",responseData);
       
       return responseData; // Return the data in case you want to use it directly
     } catch (err: any) {

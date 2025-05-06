@@ -8,12 +8,13 @@ type ModalProps = {
   onClose: () => void;
   children: ReactNode;
   title?: string;
+  titleLoading:boolean
 };
 
-export default function Modal({ open, onClose, children, title }: ModalProps) {
+export default function Modal({ open, onClose, children, title,titleLoading }: ModalProps) {
   return (
     <Transition appear show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-50 select-none" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-200"
@@ -39,7 +40,13 @@ export default function Modal({ open, onClose, children, title }: ModalProps) {
             <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white text-center shadow-xl transition-all">
               {title && (
                 <Dialog.Title className="text-lg font-semibold text-white bg-green-600 p-4">
+                  {titleLoading?
+                <div className='w-full rounded-xl bg-[#8fd5a9] h-7'/>:
+                    <div>
+
                   {title}
+                    </div>
+                }
                 </Dialog.Title>
               )}
               <div className="p-6">

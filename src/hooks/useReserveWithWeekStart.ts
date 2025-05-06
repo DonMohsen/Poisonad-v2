@@ -44,7 +44,7 @@ export const useReserveWithWeekStart = (weekStartDate: string) => {
       
       setData(result.payload);
       setWeekData(result.payload);
-      console.log("The reserves results======>>>>>", result);
+      // console.log("The reserves results======>>>>>", result);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');

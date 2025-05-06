@@ -9,11 +9,11 @@ import { CustomToast } from './ui/CustomToast';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 import useReserveWithStartWeekStore from '@/stores/useReserveWithStartWeekStore';
-import { convertToPersian } from '@/utils/convertToPersian';
 import { ChevronDown, LogOut, Wallet } from 'lucide-react';
-import { formatNumberWithCommas } from '@/utils/formatNumber';
+import { formatNumberWithCommas } from '@/lib/utils/formatNumber';
 import { useEffect, useState } from "react";
 import UserModal from "./ui/UserModal";
+import { convertToPersianNumber } from "@/lib/utils/convertToPersian";
 
 export default function Header() {
   const pathname = usePathname()
@@ -58,7 +58,7 @@ export default function Header() {
           </p>
           <p className='font-medium text-sm'>
 
-        {`${convertToPersian(formatNumberWithCommas(WeekReserveData.remainCredit.toString()))}`}
+        {`${convertToPersianNumber(formatNumberWithCommas(WeekReserveData.remainCredit.toString()))}`}
           </p>
           <Wallet className='w-6 h-6' />
         </div>:

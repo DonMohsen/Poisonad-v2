@@ -1,18 +1,21 @@
 import { FoodProgramResponse } from "@/types/food-response-types";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import jalaali from "jalaali-js";
 import Modal from "./ui/Modal";
 import QRCodeBox from "./ui/QRCodeBox";
+import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
+import { QRCodeBoxSkeleton } from "./ui/QRCodeBoxSkeleton";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
+  const [reserveId, setReserveId] = useState<string|null>(null)
   const [selectedReserve, setSelectedReserve] = useState<
     FoodProgramResponse["payload"]["userWeekReserves"][0] | null
   >(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+  const {loading: ForgetCardCodesLoading,error: ForgetCardCodesError, data: ForgetCardCodesData,fetchForgetCardCodes,} = useForgetCardCodes();
   const closeQRModal = () => {
     setIsModalOpen(false);
-    setSelectedReserve(null);
+    // setSelectedReserve(null);
   };
 
   const persianDays = [
@@ -21,8 +24,6 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
     "دوشنبه",
     "سه‌شنبه",
     "چهارشنبه",
-    "پنجشنبه",
-    "جمعه",
   ];
   const mealTypes = [
     { id: 7, name: "ناهار", disPriority: 1 },
@@ -68,16 +69,21 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
       date.getDate() === today.getDate()
     );
   };
+useEffect(() => {
+  reserveId!==null&&fetchForgetCardCodes(reserveId)
+}, [reserveId])
 
   return (
     <>
       <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
         {selectedReserve && (
           <div>
-            <div>Reserve ID: <QRCodeBox value={selectedReserve.id.toString()}/></div>
+            {/* <div>Reserve ID:</div> */}
             <p>Food: {selectedReserve.foodNames}</p>
             <p>Date: {selectedReserve.programDateStr}</p>
             <p>Status: {selectedReserve.consumed ? "مصرف شده" : "رزرو شده"}</p>
+            
+            {ForgetCardCodesLoading?<QRCodeBoxSkeleton/>:ForgetCardCodesData?<QRCodeBox value={ForgetCardCodesData?.forgotCardCode}/>:"خطای نامشخص"}
           </div>
         )}
       </Modal>
@@ -136,6 +142,7 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
                         }`}
                         onClick={() => {
                           if (reserve) {
+                            setReserveId(reserve.id.toString())
                             setSelectedReserve(reserve);
                             setIsModalOpen(true);
                           }

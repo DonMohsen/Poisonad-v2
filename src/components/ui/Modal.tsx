@@ -1,17 +1,27 @@
-'use client';
+"use client";
 
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, ReactNode } from 'react';
+import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, ReactNode } from "react";
 
 type ModalProps = {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
   title?: string;
-  titleLoading:boolean
+  titleLoading: boolean;
+  titleColor?: ModalTitleColorType; // Use the enum type here
 };
 
-export default function Modal({ open, onClose, children, title,titleLoading }: ModalProps) {
+export default function Modal({
+  open,
+  titleColor = ModalTitleColor.GREEN,
+  onClose,
+  children,
+  title,
+  titleLoading,
+}: ModalProps) {
+
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50 select-none" onClose={onClose}>
@@ -39,14 +49,16 @@ export default function Modal({ open, onClose, children, title,titleLoading }: M
           >
             <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white text-center shadow-xl transition-all">
               {title && (
-                <Dialog.Title className="text-lg font-semibold text-white bg-green-600 p-4">
-                  {titleLoading?
-                <div className='w-full rounded-xl bg-[#8fd5a9] h-7'/>:
-                    <div>
+                          <Dialog.Title className={`text-lg font-semibold text-white ${titleColor} p-4`}>
 
-                  {title}
+                  {" "}
+                  {titleLoading ? (
+                    <div className="w-full rounded-md bg-slate-200 h-7" />
+                  ) : (
+                    <div className="flex items-center justify-center text-[#1c3525]">
+                      {title}
                     </div>
-                }
+                  )}
                 </Dialog.Title>
               )}
               <div className="p-6">
@@ -55,7 +67,7 @@ export default function Modal({ open, onClose, children, title,titleLoading }: M
                   onClick={onClose}
                   className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Close
+                  برگشت
                 </button>
               </div>
             </Dialog.Panel>

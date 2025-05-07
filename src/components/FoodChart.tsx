@@ -5,27 +5,31 @@ import Modal from "./ui/Modal";
 import QRCodeBox from "./ui/QRCodeBox";
 import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import { QRCodeBoxSkeleton } from "./ui/QRCodeBoxSkeleton";
-import { convertToPersianDate, convertToPersianNumber } from "@/lib/utils/convertToPersian";
+import {
+  convertToPersianDate,
+  convertToPersianNumber,
+} from "@/lib/utils/convertToPersian";
+import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
+import { isNotToday } from "@/lib/utils/time-check";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
-  const [reserveId, setReserveId] = useState<string|null>(null)
+  const [reserveId, setReserveId] = useState<string | null>(null);
   const [selectedReserve, setSelectedReserve] = useState<
     FoodProgramResponse["payload"]["userWeekReserves"][0] | null
   >(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const {loading: ForgetCardCodesLoading,error: ForgetCardCodesError, data: ForgetCardCodesData,fetchForgetCardCodes,} = useForgetCardCodes();
+  const {
+    loading: ForgetCardCodesLoading,
+    error: ForgetCardCodesError,
+    data: ForgetCardCodesData,
+    fetchForgetCardCodes,
+  } = useForgetCardCodes();
   const closeQRModal = () => {
     setIsModalOpen(false);
     // setSelectedReserve(null);
   };
 
-  const persianDays = [
-    "شنبه",
-    "یکشنبه",
-    "دوشنبه",
-    "سه‌شنبه",
-    "چهارشنبه",
-  ];
+  const persianDays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه"];
   const mealTypes = [
     { id: 7, name: "ناهار", disPriority: 1 },
     { id: 8, name: "شام", disPriority: 2 },
@@ -70,29 +74,65 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
       date.getDate() === today.getDate()
     );
   };
-// useEffect(() => {
-//   reserveId!==null&&fetchForgetCardCodes(reserveId)
-
-// }, [reserveId])
-console.log(selectedReserve);
+  console.log(selectedReserve);
+const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["userWeekReserves"][0])=>{
+  if (selectedReserve.consumed === true) {
+    return ModalTitleColor.ORANGE;
+  }else
+  if (selectedReserve.consumed===false&&isNotToday(selectedReserve.programDate)) {
+    return ModalTitleColor.RED
+  }
+  return ModalTitleColor.GREEN; // default color for consumed items
+};
 
   return (
     <>
-    {selectedReserve&&
-      <Modal open={isModalOpen} onClose={closeQRModal} title={`${ForgetCardCodesData?.meal} ${convertToPersianNumber(convertToPersianDate(selectedReserve?.programDate))}`} titleLoading={!!ForgetCardCodesLoading}>
-      
-          <div>
-            {/* <div>Reserve ID:</div> */}
-          {selectedReserve.foodNames}
-            {/* <p>Date: {selectedReserve.programDateStr}</p> */}
-            {/* <p>{selectedReserve.}</p> */}
-            <p>Status: {selectedReserve.consumed ? "مصرف شده" : "رزرو شده"}</p>
-            
-            {ForgetCardCodesLoading?<QRCodeBoxSkeleton/>:ForgetCardCodesData?<QRCodeBox value={ForgetCardCodesData?.forgotCardCode}/>:"خطای نامشخص"}
+      {selectedReserve && (
+        <Modal
+          open={isModalOpen}
+          onClose={closeQRModal}
+          title={`${ForgetCardCodesData?.meal} ${convertToPersianNumber(
+            convertToPersianDate(selectedReserve?.programDate)
+          )}`}
+          titleLoading={!!ForgetCardCodesLoading}
+          titleColor={handlModalTitleColor(selectedReserve)}
+        >
+          <div className="flex items-center justify-center w-full flex-col gap-2">
+            <div className=" w-full text-right">
+              <p className="font-extrabold mb-2 ">
+
+              {selectedReserve.foodNames}
+              </p>
+              <p  className="font-light mb-2 text-sm   ">
+                {selectedReserve.selfName}
+              </p>
+              <p  className="font-light mb-2 text-sm ">
+                {convertToPersianNumber(selectedReserve.remainedCount.toString())} :تعداد
+              </p>
+            <p className="font-light mb-2 text-sm ">{selectedReserve.consumed===true ? "مصرف شده" : selectedReserve.consumed===false&&isNotToday(selectedReserve.programDate)?"منسوخ شده":'رزرو شده'}</p>
+            </div>
+            {ForgetCardCodesLoading ? (
+              <QRCodeBoxSkeleton />
+            ) : ForgetCardCodesData ? (
+              <QRCodeBox value={ForgetCardCodesData?.forgotCardCode} />
+            ) : (
+              "خطای نامشخص"
+            )}
+            {ForgetCardCodesLoading?
+          <p>
+
+          </p>:
+          ForgetCardCodesError?
+          <p>
+            خطای نامشخص
+          </p>:
+          
+
+            <p>{ForgetCardCodesData?.forgotCardCode}</p>
+          }
           </div>
-        
-      </Modal>
-      }
+        </Modal>
+      )}
 
       <div className="overflow-x-auto text-[14px]" dir="rtl">
         <table className="w-full border border-gray-300 max-md:text-[10px] table-fixed">
@@ -117,13 +157,19 @@ console.log(selectedReserve);
           </thead>
           <tbody>
             {data.payload.selfWeekPrograms.map((dayMeals, dayIndex) => {
-              const today = dayMeals.some(meal => isToday(meal.date));
+              const today = dayMeals.some((meal) => isToday(meal.date));
               return (
                 <tr key={dayIndex} className={""}>
-                  <td className={`border border-gray-300 text-center align-middle py-4 ${today ? "bg-yellow-100 font-bold" : "bg-gray-50"} font-medium`}>
+                  <td
+                    className={`border border-gray-300 text-center align-middle py-4 ${
+                      today ? "bg-yellow-100 font-bold" : "bg-gray-50"
+                    } font-medium`}
+                  >
                     <div>{persianDays[dayIndex]}</div>
                     <div className="text-[10px] text-gray-600">
-                      {getPersianDate(dayMeals[0]?.date || new Date().toString())}
+                      {getPersianDate(
+                        dayMeals[0]?.date || new Date().toString()
+                      )}
                     </div>
                   </td>
 
@@ -131,7 +177,9 @@ console.log(selectedReserve);
                     const meal = dayMeals.find(
                       (m) => m.mealTypeId === mealType.id
                     );
-                    const reserve = meal ? reserveMap.get(meal.programId) : null;
+                    const reserve = meal
+                      ? reserveMap.get(meal.programId)
+                      : null;
                     const isReserved = !!reserve;
                     const isConsumed = reserve?.consumed;
 
@@ -139,19 +187,18 @@ console.log(selectedReserve);
                       <td
                         key={`${dayIndex}-${mealType.id}`}
                         className={`border border-gray-300 text-center align-middle py-4 max-md:text-[10px] text-[12px] ${
-                          
                           isConsumed
                             ? "bg-orange-50 cursor-pointer hover:bg-orange-100"
                             : isReserved
                             ? "bg-green-50 cursor-pointer hover:bg-green-100"
-                            :""
+                            : ""
                         }`}
                         onClick={() => {
                           if (reserve) {
-                            setReserveId(reserve.id.toString())
+                            setReserveId(reserve.id.toString());
                             setSelectedReserve(reserve);
                             setIsModalOpen(true);
-                            fetchForgetCardCodes(reserve.id.toString())
+                            fetchForgetCardCodes(reserve.id.toString());
                           }
                         }}
                       >

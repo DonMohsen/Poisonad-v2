@@ -13,7 +13,6 @@ import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { isNotToday } from "@/lib/utils/time-check";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
-  const [reserveId, setReserveId] = useState<string | null>(null);
   const [selectedReserve, setSelectedReserve] = useState<
     FoodProgramResponse["payload"]["userWeekReserves"][0] | null
   >(null);
@@ -195,7 +194,6 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
                         }`}
                         onClick={() => {
                           if (reserve) {
-                            setReserveId(reserve.id.toString());
                             setSelectedReserve(reserve);
                             setIsModalOpen(true);
                             fetchForgetCardCodes(reserve.id.toString());

@@ -1,14 +1,14 @@
-// lib/utils/isNotToday.ts
+// lib/utils/isPastDate.ts
 import dayjs from 'dayjs';
 
 /**
- * Checks if a given "YYYY-MM-DD" Gregorian date is NOT today.
+ * Checks if a given "YYYY-MM-DD" Gregorian date is in the past (before today).
  * @param inputDate - Date string in "YYYY-MM-DD" format
- * @returns true if the date is not today, false if it is today
+ * @returns true if the date is before today, false otherwise
  */
-export function isNotToday(inputDate: string): boolean {
+export function isPastDate(inputDate: string): boolean {
   const today = dayjs().startOf('day');
   const input = dayjs(inputDate).startOf('day');
 
-  return !input.isSame(today, 'day');
+  return input.isBefore(today, 'day');
 }

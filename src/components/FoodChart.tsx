@@ -10,7 +10,7 @@ import {
   convertToPersianNumber,
 } from "@/lib/utils/convertToPersian";
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
-import { isNotToday } from "@/lib/utils/time-check";
+import { isPastDate } from "@/lib/utils/time-check";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
   const [selectedReserve, setSelectedReserve] = useState<
@@ -28,7 +28,7 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
     // setSelectedReserve(null);
   };
 
-  const persianDays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه"];
+  const persianDays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه","پنجشنبه","جمعه"];
   const mealTypes = [
     { id: 7, name: "ناهار", disPriority: 1 },
     { id: 8, name: "شام", disPriority: 2 },
@@ -78,7 +78,7 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
   if (selectedReserve.consumed === true) {
     return ModalTitleColor.ORANGE;
   }else
-  if (selectedReserve.consumed===false&&isNotToday(selectedReserve.programDate)) {
+  if (selectedReserve.consumed===false&&isPastDate(selectedReserve.programDate)) {
     return ModalTitleColor.RED
   }
   return ModalTitleColor.GREEN; // default color for consumed items
@@ -108,7 +108,7 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
               <p  className="font-light mb-2 text-sm ">
                 {convertToPersianNumber(selectedReserve.remainedCount.toString())} :تعداد
               </p>
-            <p className="font-light mb-2 text-sm ">{selectedReserve.consumed===true ? "مصرف شده" : selectedReserve.consumed===false&&isNotToday(selectedReserve.programDate)?"منسوخ شده":'رزرو شده'}</p>
+            <p className="font-light mb-2 text-sm ">{selectedReserve.consumed===true ? "مصرف شده" : selectedReserve.consumed===false&&isPastDate(selectedReserve.programDate)?"منسوخ شده":'رزرو شده'}</p>
             </div>
             {ForgetCardCodesLoading ? (
               <QRCodeBoxSkeleton />
@@ -133,7 +133,7 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
         </Modal>
       )}
 
-      <div className="overflow-x-auto text-[14px]" dir="rtl">
+      <div className="overflow-x-auto text-[14px] select-none" dir="rtl">
         <table className="w-full border border-gray-300 max-md:text-[10px] table-fixed">
           <colgroup>
             <col className="w-[60px] md:w-24" />

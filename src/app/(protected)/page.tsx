@@ -1,6 +1,8 @@
 "use client";
-import { BsFillCheckCircleFill } from "react-icons/bs";
+import { BsArrowLeftSquare, BsFillCheckCircleFill } from "react-icons/bs";
 import * as jalaali from 'jalaali-js'; // Add this import at the top
+import { BsArrowRightSquare } from "react-icons/bs";
+import { FaAngleRight, FaAnglesRight } from "react-icons/fa6";
 
 import {
   format,
@@ -38,6 +40,7 @@ import { FoodProgramResponse } from "@/types/food-response-types";
 import { toJalaali } from "jalaali-js";
 import { getPersianWeekRange } from "@/lib/utils/getPersianWeekRange";
 import { convertToPersianNumber } from "@/lib/utils/convertToPersian";
+import { HiChevronDoubleLeft, HiChevronDoubleRight, HiChevronLeft, HiChevronRight } from "react-icons/hi";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
@@ -167,7 +170,11 @@ export default function HomePage() {
     return `${firstFormatted} تا ${lastFormatted}`;
   };
   const weekRange = getPersianWeekRange(selectedWeekStart);
-
+  const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
+  const weekDiff = Math.floor(
+    Math.abs(selectedWeekStart.getTime() - currentWeekSaturday.getTime()) / MS_IN_WEEK
+  );
+  
   return (
     <>
      {/* <Modal open={isModalOpen} onClose={closeQRModal} title="کد فراموشی">
@@ -189,43 +196,59 @@ export default function HomePage() {
           )
         )}
       </Modal> */}
-      <div className="flex flex-col items-center justify-center gap-2 bg-white">
-        <div className="flex items-center justify-center gap-2">
-          <CircleChevronLeft
-            className="w-8 h-8 hover:fill-green-200 cursor-pointer"
-            onClick={handleNextWeek}
-          />
+      <div className="flex flex-col items-center justify-center bg-white">
+      <div className="flex items-center justify-center gap-2 select-none my-5 w-full h-full ">
+    <div className="flex relative items-center justify-center">
+      {weekDiff > 2 && selectedWeekStart < currentWeekSaturday && (
+                    <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center absolute -left-10">
 
-          <h2 className="font-bold" dir="rtl">
-            
-            {weekLabel}
-          </h2>
-          <CircleChevronRight
-            className="w-8 h-8 hover:fill-green-200 cursor-pointer"
-            onClick={handlePrevWeek}
-            />
-          
+        <HiChevronDoubleLeft
+          onClick={() => setSelectedWeekStart(currentWeekSaturday)}
+          className=" cursor-pointer   w-6 h-6 transition-all duration-300"
+        />
         </div>
-            {foodData && (
-            <div className="text-sm text-gray-600 mb-2" dir="rtl" >
-              {weekRange}
-            </div>
-          )}
+      )}
+    </div>
+    <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center">
+
+    <HiChevronLeft
+      className="w-6 h-6  cursor-pointer"
+      onClick={handleNextWeek}
+    />
+    </div>
+
+    <div className="flex items-center justify-center flex-col w-[150px]">
+      <h2 className="font-bold" dir="rtl">
+        {weekLabel}
+      </h2>
+      {foodData && (
+        <div className="text-sm text-gray-600" dir="rtl">
+          {weekRange}
+        </div>
+      )}
+    </div>
+
+    <div className="relative flex">
+    <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center">
+  <HiChevronRight
+    className="w-6 h-6  cursor-pointer"
+    onClick={handlePrevWeek}
+  />
+</div>
+
+      {weekDiff > 2 && selectedWeekStart > currentWeekSaturday && (
+            <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center absolute -right-12">
+
+        <HiChevronDoubleRight
+          onClick={() => setSelectedWeekStart(currentWeekSaturday)}
+          className=" w-6 h-6  cursor-pointer transition-all  duration-300"
+        />
+      </div>
+      )}
+    </div>
+  </div>
         
-        {Math.abs(
-          differenceInCalendarWeeks(
-            selectedWeekStart,
-            currentWeekSaturday
-          )
-        ) > 1 && (
-          <Button
-            onClick={() => setSelectedWeekStart(currentWeekSaturday)}
-            className="mt-1 hover:bg-green-100 cursor-pointer transition-all duration-300"
-            variant="outline"
-          >
-            بازگشت به این هفته
-          </Button>
-        )}
+
       </div>
 
       <div className="container mx-auto min-h-[300vh] overflow-y-auto bg-white">

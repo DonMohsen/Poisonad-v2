@@ -11,6 +11,7 @@ import {
 } from "@/lib/utils/convertToPersian";
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { isPastDate } from "@/lib/utils/time-check";
+import { Plus, SquarePlus } from "lucide-react";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
   const [selectedReserve, setSelectedReserve] = useState<
@@ -28,7 +29,15 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
     // setSelectedReserve(null);
   };
 
-  const persianDays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه","پنجشنبه","جمعه"];
+  const persianDays = [
+    "شنبه",
+    "یکشنبه",
+    "دوشنبه",
+    "سه‌شنبه",
+    "چهارشنبه",
+    "پنجشنبه",
+    "جمعه",
+  ];
   const mealTypes = [
     { id: 7, name: "ناهار", disPriority: 1 },
     { id: 8, name: "شام", disPriority: 2 },
@@ -74,16 +83,30 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
     );
   };
   console.log(selectedReserve);
-const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["userWeekReserves"][0])=>{
-  if (selectedReserve.consumed === true) {
-    return ModalTitleColor.ORANGE;
-  }else
-  if (selectedReserve.consumed===false&&isPastDate(selectedReserve.programDate)) {
-    return ModalTitleColor.RED
-  }
-  return ModalTitleColor.GREEN; // default color for consumed items
-};
+  const handlModalTitleColor = (
+    selectedReserve: FoodProgramResponse["payload"]["userWeekReserves"][0]
+  ) => {
+    if (selectedReserve.consumed === true) {
+      return ModalTitleColor.ORANGE;
+    } else if (
+      selectedReserve.consumed === false &&
+      isPastDate(selectedReserve.programDate)
+    ) {
+      return ModalTitleColor.RED;
+    }
+    return ModalTitleColor.GREEN; // default color for consumed items
+  };
+  const allPrograms = data.payload.selfWeekPrograms.flat();
+  const reservableFoods = allPrograms.filter((p) => !p.reserveRuleViolated);
+  useEffect(() => {
+    console.log("data", data);
+  }, []);
 
+  console.log(allPrograms);
+const handlePerformReserve=(programId:number)=>{
+console.log(programId);
+
+}
   return (
     <>
       {selectedReserve && (
@@ -99,17 +122,27 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
           <div className="flex items-center justify-center w-full flex-col gap-2">
             <div className=" w-full text-right">
               <p className="font-extrabold mb-2 ">
-
-              {selectedReserve.foodNames}
+                {selectedReserve.foodNames}
               </p>
-              <p  className="font-light mb-2 text-sm   ">
+              <p className="font-light mb-2 text-sm   ">
                 {selectedReserve.selfName}
               </p>
-              <p  className="font-light mb-2 text-sm ">
-                {convertToPersianNumber(selectedReserve.remainedCount.toString())} :تعداد
+              <p className="font-light mb-2 text-sm ">
+                {convertToPersianNumber(
+                  selectedReserve.remainedCount.toString()
+                )}{" "}
+                :تعداد
               </p>
-            <p className="font-light mb-2 text-sm ">{selectedReserve.consumed===true ? "مصرف شده" : selectedReserve.consumed===false&&isPastDate(selectedReserve.programDate)?"منسوخ شده":'رزرو شده'}</p>
+              <p className="font-light mb-2 text-sm ">
+                {selectedReserve.consumed === true
+                  ? "مصرف شده"
+                  : selectedReserve.consumed === false &&
+                    isPastDate(selectedReserve.programDate)
+                  ? "منسوخ شده"
+                  : "رزرو شده"}
+              </p>
             </div>
+
             {ForgetCardCodesLoading ? (
               <QRCodeBoxSkeleton />
             ) : ForgetCardCodesData ? (
@@ -117,18 +150,13 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
             ) : (
               "خطای نامشخص"
             )}
-            {ForgetCardCodesLoading?
-          <p>
-
-          </p>:
-          ForgetCardCodesError?
-          <p>
-            خطای نامشخص
-          </p>:
-          
-
-            <p>{ForgetCardCodesData?.forgotCardCode}</p>
-          }
+            {ForgetCardCodesLoading ? (
+              <p></p>
+            ) : ForgetCardCodesError ? (
+              <p>خطای نامشخص</p>
+            ) : (
+              <p>{ForgetCardCodesData?.forgotCardCode}</p>
+            )}
           </div>
         </Modal>
       )}
@@ -166,8 +194,10 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
                   >
                     <div>{persianDays[dayIndex]}</div>
                     <div className="text-[10px] text-gray-600">
-                      {getPersianDate(
-                        dayMeals[0]?.date || new Date().toString()
+                      {convertToPersianNumber(
+                        getPersianDate(
+                          dayMeals[0]?.date || new Date().toString()
+                        )
                       )}
                     </div>
                   </td>
@@ -205,7 +235,22 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
                             <div className="font-medium line-clamp-2">
                               {meal.foodName}
                             </div>
-                            {isConsumed && (
+                            <div className="w-full flex items-center justify-center">
+                              {reservableFoods.some(
+                                (f) => f.programId === meal.programId
+                              )
+                                ? 
+                                <div 
+                                onClick={()=>handlePerformReserve(meal.programId)}
+                                className=" border-black/[0.3] cursor-pointer hover:bg-green-300 transition-all duration-300 rounded-md bg-green-500  flex items-center justify-center">
+
+                                <Plus className="text-white "  />
+                                </div>
+                                : 
+                                <div></div>
+                                }
+                            </div>
+                            {/* {isConsumed && (
                               <div className="text-xs text-orange-600">
                                 مصرف شده
                               </div>
@@ -214,7 +259,7 @@ const handlModalTitleColor=(selectedReserve:FoodProgramResponse["payload"]["user
                               <div className="text-xs text-green-600">
                                 رزرو شده
                               </div>
-                            )}
+                            )} */}
                           </div>
                         )}
                       </td>

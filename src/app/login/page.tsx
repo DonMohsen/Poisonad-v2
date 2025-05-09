@@ -55,16 +55,19 @@ const LoginPage = () => {
         // console.log(response);
         
         setToken(response.access_token)
-        toast.custom((t) => (
-          <CustomToast t={t} type="success" message=" ! ورود موفقیت آمیز" />
-        ));
+        
+        toast.custom(
+          (t) => <CustomToast t={t} message="!ورود موفقیت آمیز" type="success" />,
+          { duration: Infinity }
+        );
                 router.push('/');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
-toast.custom((t) => (
-  <CustomToast t={t} type="error" message="! ورود ناموفق" />
-));
+      toast.custom(
+        (t) => <CustomToast t={t} message="!خروج موفقیت آمیز" type="success" />,
+        { duration: Infinity }
+      );
     } finally {
       setIsSubmitting(false);
     }

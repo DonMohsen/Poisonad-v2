@@ -51,33 +51,44 @@ export const CustomToast = ({ t, message, type = "success" }: CustomToastProps) 
 
   return (
     <AnimatePresence>
-      {t.visible && (
-        <motion.div
-          layout
-          initial={{ x: 300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 300, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          drag="x"
-          onDragEnd={(e, info) => {
-            if (info.offset.x > 100) toast.dismiss(t.id);
-          }}
-          className={`text-white px-4 py-3 rounded-lg shadow-lg cursor-pointer w-full max-w-sm relative ${getColor()}`}
-        >
-          <div className="flex items-center">
-            {getIcon()}
-            <span>{message}</span>
-          </div>
+ {t.visible && (
+  <motion.div
+    layout
+    initial={{ x: 300, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    exit={{ x: 300, opacity: 0 }}
+    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    drag="x"
+    onDragEnd={(e, info) => {
+      if (info.offset.x > 100) toast.dismiss(t.id);
+    }}
+    className={`text-white px-4 py-3 rounded-lg shadow-lg cursor-pointer w-full max-w-sm relative ${getColor()}`}
+  >
+    <div className="flex items-center">
+      {getIcon()}
+      <span>{message}</span>
+    </div>
 
-          {/* Show timer only if not loading */}
-          {type !== "loading" && (
-            <div
-              className="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-lg"
-              style={{ width: `${progress}%`, transition: "width 0.1s linear" }}
-            />
-          )}
-        </motion.div>
-      )}
+    {/* Timer bar */}
+    {type !== "loading" && (
+      <div
+        className="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-lg"
+        style={{ width: `${progress}%`, transition: "width 0.1s linear" }}
+      />
+    )}
+
+    {/* Close Button */}
+    <div className="mt-3 text-right">
+      <button
+        onClick={() => toast.dismiss(t.id)}
+        className="text-sm text-white/80 hover:text-white transition"
+      >
+        Close
+      </button>
+    </div>
+  </motion.div>
+)}
+
     </AnimatePresence>
   );
 };

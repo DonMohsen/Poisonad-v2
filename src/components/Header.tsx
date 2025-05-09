@@ -14,18 +14,19 @@ import { formatNumberWithCommas } from '@/lib/utils/formatNumber';
 import { useEffect, useState } from "react";
 import UserModal from "./ui/UserModal";
 import { convertToPersianNumber } from "@/lib/utils/convertToPersian";
+import { useReserveWithWeekStart } from "@/hooks/useReserveWithWeekStart";
 
 export default function Header() {
-  const pathname = usePathname()
-    const { loading, error, data } = useUserInfo();
-    const {error:logoutError,isError,isLoading:logoutLoading,logout}=useLogout()
-    const userInfo = useUserStore((state) => state.user);
-    const userLogout = useUserStore((state) => state.logout);
-    const WeekReserveData = useReserveWithStartWeekStore((state) => state.weekReserveData);
+  const { loading, error, data } = useUserInfo();
+  const {error:logoutError,isError,isLoading:logoutLoading,logout}=useLogout()
+  const userInfo = useUserStore((state) => state.user);
+  const userLogout = useUserStore((state) => state.logout);
+  const WeekReserveData = useReserveWithStartWeekStore((state) => state.weekReserveData);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false)
- 
-    const handleLogout = async () => { 
-      
+  
+  
+
+  const handleLogout = async () => { 
       try {
         await logout();
         toast.custom((t) => (

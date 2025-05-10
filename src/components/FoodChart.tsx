@@ -12,6 +12,7 @@ import {
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { isPastDate } from "@/lib/utils/time-check";
 import { Plus, SquarePlus } from "lucide-react";
+import { formatNumberWithCommas } from "@/lib/utils/formatNumber";
 
 const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
   const [selectedReserve, setSelectedReserve] = useState<
@@ -231,8 +232,8 @@ console.log(programId);
                         }}
                       >
                         {meal && (
-                          <div className="leading-tight space-y-1 px-1">
-                            <div className="font-medium line-clamp-2">
+                          <div className="leading-tight space-y-1 px-1 flex items-center justify-center w-full flex-col ">
+                            <div className="font-medium line-clamp-2 h-[26px]">
                               {meal.foodName}
                             </div>
                             <div className="w-full flex items-center justify-center">
@@ -242,9 +243,9 @@ console.log(programId);
                                 ? 
                                 <div 
                                 onClick={()=>handlePerformReserve(meal.programId)}
-                                className=" border-black/[0.3] cursor-pointer hover:bg-green-300 transition-all duration-300 rounded-md bg-green-500  flex items-center justify-center">
-
-                                <Plus className="text-white "  />
+                                className="border border-black/[0.3] cursor-pointer max-md:w-full md:w-[50%]  hover:bg-green-100 transition-all duration-300 rounded-md   flex items-center justify-between ">
+                                <Plus className="text-green-500 w-full flex items-end justify-end"  />
+                                  <p className="w-full font-extrabold  h-full flex items-center justify-center translate-y-[1px]">{convertToPersianNumber(formatNumberWithCommas(meal.price.toString()))}</p>
                                 </div>
                                 : 
                                 <div></div>

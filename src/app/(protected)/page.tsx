@@ -56,7 +56,6 @@ export default function HomePage() {
     setWeekStartDate(formatted);
   }, []);
   
-  const { loading:reserveWithWeekStartLoading, error:reserveWithWeekStartError, data:reserveWithWeekStartData, refetch:reserveWithWeekStartrefetch } = useReserveWithWeekStart(weekStartDate);
 
   // Improved week start calculation
   const getStartOfWeek = (date: Date) => {
@@ -119,6 +118,7 @@ export default function HomePage() {
     data: foodData,
     error: foodError,
     loading: foodLoading,
+    refetch
   } = useFoodPrograms(104, apiFormattedDate);
 
   const [reserveId, setReserveId] = useState<null | number>(null);
@@ -269,7 +269,7 @@ export default function HomePage() {
           {foodLoading ? (
             <TableSkeleton />
           ) : foodData && foodData.payload.selfWeekPrograms ? (
-            <FoodChart data={foodData} />
+            <FoodChart data={foodData} date={apiFormattedDate}  />
           ) : (
             <div className="text-center py-10 text-gray-500">
               اطلاعاتی برای این هفته یافت نشد.

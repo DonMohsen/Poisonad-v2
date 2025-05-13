@@ -13,8 +13,12 @@ import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { isPastDate } from "@/lib/utils/time-check";
 import { Plus, SquarePlus } from "lucide-react";
 import { formatNumberWithCommas } from "@/lib/utils/formatNumber";
+import { useFoodReserve } from "@/hooks/useFoodReserve";
+import useFoodPrograms from "@/hooks/useFoodPrograms";
+import { useReserveWithWeekStart } from "@/hooks/useReserveWithWeekStart";
+import useReserveWithStartWeekStore from "@/stores/useReserveWithStartWeekStore";
 
-const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
+const FoodChart = ({ data ,date}: { data: FoodProgramResponse ,date:string}) => {
   const [selectedReserve, setSelectedReserve] = useState<
     FoodProgramResponse["payload"]["userWeekReserves"][0] | null
   >(null);
@@ -25,6 +29,16 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
     data: ForgetCardCodesData,
     fetchForgetCardCodes,
   } = useForgetCardCodes();
+   const {
+    refetch
+  } = useFoodPrograms(104, date);
+  const { refetch:reserveWithWeekStartrefetch } = useReserveWithWeekStart("2025-05-12");
+ const reserveWithWeekStartData = useReserveWithStartWeekStore((state) => state.weekReserveData);
+  const reserveWithWeekStartLoading = useReserveWithStartWeekStore((state) => state.loading);
+  const reserveWithWeekStartError = useReserveWithStartWeekStore((state) => state.error);
+
+    const { reserve, data:foodReserveData, loading:foodReserveLoading, error:foodReserveError } = useFoodReserve();
+
   const closeQRModal = () => {
     setIsModalOpen(false);
     // setSelectedReserve(null);
@@ -103,9 +117,16 @@ const FoodChart = ({ data }: { data: FoodProgramResponse }) => {
     console.log("data", data);
   }, []);
 
-  console.log(allPrograms);
-const handlePerformReserve=(programId:number)=>{
-console.log(programId);
+  // console.log(allPrograms);
+const handlePerformReserve=async(e: React.MouseEvent,programId:number,foodTypeId:number,mealTypeId:number)=>{
+      e.stopPropagation()
+  const selected = false;
+const result = await reserve({ selected, mealTypeId, foodTypeId, programId });
+console.log("Result of reserve: ", result);
+if (result?.success) {
+  console.log("Calling refetch");
+  reserveWithWeekStartrefetch();
+}
 
 }
   return (
@@ -242,13 +263,14 @@ console.log(programId);
                               )
                                 ? 
                                 <div 
-                                onClick={()=>handlePerformReserve(meal.programId)}
-                                className="border border-black/[0.3] cursor-pointer max-md:w-full md:w-[50%]  hover:bg-green-100 transition-all duration-300 rounded-md   flex items-center justify-between ">
+                                onClick={(e)=>handlePerformReserve(e,meal.programId,meal.foodTypeId,meal.mealTypeId)}
+                                className="border z-[10000] border-black/[0.3] cursor-pointer max-md:w-full md:w-[50%] bg-white hover:bg-green-100 transition-all duration-300 rounded-md   flex items-center justify-between ">
                                 <Plus className="text-green-500 w-full flex items-end justify-end"  />
+                                {foodReserveLoading&&"Loading"}
                                   <p className="w-full font-extrabold  h-full flex items-center justify-center translate-y-[1px]">{convertToPersianNumber(formatNumberWithCommas(meal.price.toString()))}</p>
                                 </div>
                                 : 
-                                <div></div>
+                                null
                                 }
                             </div>
                             {/* {isConsumed && (

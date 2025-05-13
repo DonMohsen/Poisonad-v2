@@ -11,6 +11,8 @@ const useFoodPrograms = (selfId: number, date: string) => {
 
     const fetchData = useCallback(async () => {
         try {
+            console.log("the chart data loading");
+            
             setLoading(true);
             setError(null);
             

@@ -8,6 +8,8 @@ interface ReserveState {
   setWeekReserveData: (data: ReserveWithWeekStart) => void;
   setLoading: (value: boolean) => void;
   setError: (error: string | null) => void;
+    logout: () => void;
+
 }
 
 const useReserveWithStartWeekStore = create<ReserveState>((set) => ({
@@ -17,6 +19,8 @@ const useReserveWithStartWeekStore = create<ReserveState>((set) => ({
   setWeekReserveData: (data) => set({ weekReserveData: data }),
   setLoading: (value) => set({ loading: value }),
   setError: (error) => set({ error }),
+    logout: () => set({ weekReserveData: null }),
+
 }));
 
 export default useReserveWithStartWeekStore;

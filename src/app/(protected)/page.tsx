@@ -41,6 +41,7 @@ import { toJalaali } from "jalaali-js";
 import { getPersianWeekRange } from "@/lib/utils/getPersianWeekRange";
 import { convertToPersianNumber } from "@/lib/utils/convertToPersian";
 import { HiChevronDoubleLeft, HiChevronDoubleRight, HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import useFoodProgramStore from "@/stores/useFoodProgramStore";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
@@ -113,13 +114,12 @@ export default function HomePage() {
 
   // Format for API only when needed
   const apiFormattedDate = format(selectedWeekStart, "yyyy-MM-dd");
-
-  const {
-    data: foodData,
+ const {
     error: foodError,
     loading: foodLoading,
     refetch
   } = useFoodPrograms(104, apiFormattedDate);
+  const foodProgramData = useFoodProgramStore((state) => state.data);
 
   const [reserveId, setReserveId] = useState<null | number>(null);
   const [modalData, setModalData] = useState<null | MealTypeEntry>(null);
@@ -234,7 +234,7 @@ export default function HomePage() {
       <h2 className="font-bold" dir="rtl">
         {weekLabel}
       </h2>
-      {foodData && (
+      {foodProgramData && (
         <div className="text-sm text-gray-600" dir="rtl">
           {weekRange}
         </div>
@@ -268,8 +268,8 @@ export default function HomePage() {
         <div className="container mx-auto min-h-[300vh] overflow-y-auto bg-white">
           {foodLoading ? (
             <TableSkeleton />
-          ) : foodData && foodData.payload.selfWeekPrograms ? (
-            <FoodChart data={foodData} date={apiFormattedDate}  />
+          ) : foodProgramData && foodProgramData.payload.selfWeekPrograms ? (
+            <FoodChart data={foodProgramData} date={apiFormattedDate}  />
           ) : (
             <div className="text-center py-10 text-gray-500">
               اطلاعاتی برای این هفته یافت نشد.

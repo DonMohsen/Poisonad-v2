@@ -126,6 +126,8 @@ console.log("Result of reserve: ", result);
 if (result?.type==="SUCCESS") {
   console.log("Calling refetch");
   reserveWithWeekStartrefetch();
+  refetch()
+
 }
 
 }

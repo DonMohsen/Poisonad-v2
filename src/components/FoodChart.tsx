@@ -123,7 +123,7 @@ const handlePerformReserve=async(e: React.MouseEvent,programId:number,foodTypeId
   const selected = false;
 const result = await reserve({ selected, mealTypeId, foodTypeId, programId });
 console.log("Result of reserve: ", result);
-if (result?.success) {
+if (result?.type==="SUCCESS") {
   console.log("Calling refetch");
   reserveWithWeekStartrefetch();
 }
@@ -264,7 +264,7 @@ if (result?.success) {
                                 ? 
                                 <div 
                                 onClick={(e)=>handlePerformReserve(e,meal.programId,meal.foodTypeId,meal.mealTypeId)}
-                                className="border z-[10000] border-black/[0.3] cursor-pointer max-md:w-full md:w-[50%] bg-white hover:bg-green-100 transition-all duration-300 rounded-md   flex items-center justify-between ">
+                                className="border border-black/[0.3] cursor-pointer max-md:w-full md:w-[50%] bg-white hover:bg-green-100 transition-all duration-300 rounded-md   flex items-center justify-between ">
                                 <Plus className="text-green-500 w-full flex items-end justify-end"  />
                                 {foodReserveLoading&&"Loading"}
                                   <p className="w-full font-extrabold  h-full flex items-center justify-center translate-y-[1px]">{convertToPersianNumber(formatNumberWithCommas(meal.price.toString()))}</p>

@@ -272,7 +272,7 @@ export default function HomePage() {
             <FoodChart data={foodProgramData} date={apiFormattedDate}  />
           ) : (
             <div className="text-center py-10 text-gray-500">
-              اطلاعاتی برای این هفته یافت نشد.
+              اطلاعاتی برای این هفته یافت نشد
             </div>
           )}
         </div>

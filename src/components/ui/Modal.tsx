@@ -2,6 +2,7 @@
 
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { Dialog, Transition } from "@headlessui/react";
+import html2canvas from "html2canvas";
 import { Fragment, ReactNode } from "react";
 
 type ModalProps = {
@@ -10,7 +11,7 @@ type ModalProps = {
   children: ReactNode;
   title?: string;
   titleLoading: boolean;
-  titleColor?: ModalTitleColorType; // Use the enum type here
+  titleColor?: ModalTitleColorType;
 };
 
 export default function Modal({
@@ -21,6 +22,21 @@ export default function Modal({
   title,
   titleLoading,
 }: ModalProps) {
+  const handleDownload = async () => {
+    const element = document.getElementById("modal-screenshot");
+    if (!element) return;
+
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+    });
+
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "modal-screenshot.png";
+    link.click();
+  };
 
   return (
     <Transition appear show={open} as={Fragment}>
@@ -49,9 +65,9 @@ export default function Modal({
           >
             <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white text-center shadow-xl transition-all">
               {title && (
-                          <Dialog.Title className={`text-lg font-semibold text-white ${titleColor} p-4`}>
-
-                  {" "}
+                <Dialog.Title
+                  className={`text-lg font-semibold text-white ${titleColor} p-4`}
+                >
                   {titleLoading ? (
                     <div className="w-full rounded-md bg-slate-200 h-7" />
                   ) : (
@@ -61,13 +77,25 @@ export default function Modal({
                   )}
                 </Dialog.Title>
               )}
-              <div className="p-6">
+
+              {/* 🟩 Make screenshot target area obvious */}
+              <div id="modal-screenshot" className="p-6">
                 {children}
+              </div>
+
+              {/* 🟦 Buttons at the bottom */}
+              <div className="flex justify-between px-6 pb-6 gap-4">
                 <button
                   onClick={onClose}
-                  className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
                 >
                   برگشت
+                </button>
+                <button
+                  onClick={handleDownload}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  دانلود تصویر
                 </button>
               </div>
             </Dialog.Panel>

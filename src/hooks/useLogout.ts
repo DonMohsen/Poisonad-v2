@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useUserStore from '@/stores/useUserStore';
 import useReserveWithStartWeekStore from '@/stores/useReserveWithStartWeekStore';
+import useFoodProgramStore from '@/stores/useFoodProgramStore';
 
 interface UseLogoutProps {
   redirectPath?: string;
@@ -20,6 +21,7 @@ export function useLogout({
   const router = useRouter();
   const userLogout = useUserStore((state) => state.logout);
   const weekDataClear = useReserveWithStartWeekStore((state) => state.logout);
+  
 
   const logout = async () => {
     setIsLoading(true);
@@ -31,6 +33,7 @@ export function useLogout({
       
       // Clear client-side auth state
       localStorage.removeItem('bearerToken');
+      useFoodProgramStore.getState().clearData();
       sessionStorage.removeItem('authState'); // if using sessionStorage
       document.cookie = 'token=; Max-Age=0; path=/'; // if using cookies
       userLogout()

@@ -30,7 +30,8 @@ const FoodChart = ({ data ,date}: { data: FoodProgramResponse ,date:string}) => 
     fetchForgetCardCodes,
   } = useForgetCardCodes();
    const {
-    refetch
+    refetch,
+    loading:foodProgramLoading
   } = useFoodPrograms(104, date);
   const { refetch:reserveWithWeekStartrefetch } = useReserveWithWeekStart("2025-05-12");
  const reserveWithWeekStartData = useReserveWithStartWeekStore((state) => state.weekReserveData);
@@ -269,6 +270,7 @@ if (result?.type==="SUCCESS") {
                                 className="border border-black/[0.3] cursor-pointer max-md:w-full md:w-[50%] bg-white hover:bg-green-100 transition-all duration-300 rounded-md   flex items-center justify-between ">
                                 <Plus className="text-green-500 w-full flex items-end justify-end"  />
                                 {foodReserveLoading&&"Loading"}
+                                {/* {foodProgramLoading&&"..."} */}
                                   <p className="w-full font-extrabold  h-full flex items-center justify-center translate-y-[1px]">{convertToPersianNumber(formatNumberWithCommas(meal.price.toString()))}</p>
                                 </div>
                                 : 

@@ -138,16 +138,27 @@ if (result?.type==="SUCCESS") {
         <Modal
           open={isModalOpen}
           onClose={closeQRModal}
-          title={`${ForgetCardCodesData?.meal} ${convertToPersianNumber(
-            convertToPersianDate(selectedReserve?.programDate)
-          )}`}
+          title={`جزئیات غذای ${selectedReserve.consumed === true
+                  ? "مصرف شده"
+                  : selectedReserve.consumed === false &&
+                    isPastDate(selectedReserve.programDate)
+                  ? "منسوخ شده"
+                  : "رزرو شده"}`}
           titleLoading={!!ForgetCardCodesLoading}
           titleColor={handlModalTitleColor(selectedReserve)}
+          downloadFileName={`${ForgetCardCodesData?.meal} ${convertToPersianNumber(
+            convertToPersianDate(selectedReserve?.programDate)
+          )}`}
         >
           <div className="flex items-center justify-center w-full flex-col gap-2">
             <div className=" w-full text-right">
               <p className="font-extrabold mb-2 ">
                 {selectedReserve.foodNames}
+              </p>
+              <p className="font-light mb-2 text-md ">
+              {ForgetCardCodesData?.meal} {convertToPersianNumber(
+            convertToPersianDate(selectedReserve?.programDate)
+          )}
               </p>
               <p className="font-light mb-2 text-sm   ">
                 {selectedReserve.selfName}

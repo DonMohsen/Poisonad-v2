@@ -1,5 +1,6 @@
 "use client";
 
+import { darkenHexColor, extractHexFromTailwindClass } from "@/lib/utils/colors";
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { Dialog, Transition } from "@headlessui/react";
 import html2canvas from "html2canvas";
@@ -12,6 +13,7 @@ type ModalProps = {
   title?: string;
   titleLoading: boolean;
   titleColor?: ModalTitleColorType;
+   downloadFileName?: string;
 };
 
 export default function Modal({
@@ -21,22 +23,26 @@ export default function Modal({
   children,
   title,
   titleLoading,
+  downloadFileName
 }: ModalProps) {
-  const handleDownload = async () => {
-    const element = document.getElementById("modal-screenshot");
-    if (!element) return;
+const handleDownload = async () => {
+  const element = document.getElementById("modal-screenshot");
+  if (!element) return;
 
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-    });
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+  });
 
-    const image = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = image;
-    link.download = "modal-screenshot.png";
-    link.click();
-  };
+  const image = canvas.toDataURL("image/png");
+  const link = document.createElement("a");
+  link.href = image;
+  link.download = `${downloadFileName || "reservation-screenshot"}.png`; // ← uses prop
+  link.click();
+};
+const hex = extractHexFromTailwindClass(titleColor);
+const darkHex = hex ? darkenHexColor(hex, 100) : '#000';
+
 
   return (
     <Transition appear show={open} as={Fragment}>
@@ -66,12 +72,15 @@ export default function Modal({
             <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white text-center shadow-xl transition-all">
               {title && (
                 <Dialog.Title
-                  className={`text-lg font-semibold text-white ${titleColor} p-4`}
+                  className={`text-[15px] font-extrabold text-white w-full flex items-end justify-end ${titleColor} p-4`}
                 >
                   {titleLoading ? (
                     <div className="w-full rounded-md bg-slate-200 h-7" />
                   ) : (
-                    <div className="flex items-center justify-center text-[#1c3525]">
+                    <div className={`flex items-center justify-center `}
+  style={{ color: darkHex }}
+
+                    >
                       {title}
                     </div>
                   )}

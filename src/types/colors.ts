@@ -1,7 +1,7 @@
 export enum ModalTitleColor {
-    RED = "bg-red-500",
-    GREEN = "bg-green-400",
-    ORANGE = "bg-orange-200",
+    RED = "bg-[#fb2c36]",
+    GREEN = "bg-[#05df71]",
+    ORANGE = "bg-[#fa9d41]",
     SLATE_500 = "slate-500",
     SLATE_900 = "slate-900"
   }

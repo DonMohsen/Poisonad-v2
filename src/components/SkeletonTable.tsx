@@ -10,7 +10,7 @@ const FoodChartSkeleton = () => {
   ];
 
   return (
-    <div className="overflow-x-auto text-[14px]" dir="rtl">
+    <div className="overflow-x-auto text-[14px] select-none" dir="rtl">
       <table className="w-full border border-gray-300 max-md:text-[10px] table-fixed">
         <colgroup>
           <col className="w-[60px] md:w-24" />

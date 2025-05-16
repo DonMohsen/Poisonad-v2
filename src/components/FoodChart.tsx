@@ -203,7 +203,15 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
             ForgetCardCodesData?.meal
           } ${convertToPersianNumber(
             convertToPersianWeekday(selectedReserve?.programDate)
-          )}`}
+          )}${selectedReserve?.programDate
+                  ?(
+                      convertToPersianDate(
+                        getFormattedPersianDateFromPrograms(
+                          selectedReserve.programDate
+                        )!
+                      )
+                    )
+                  : null}`}
         >
           <div className="flex items-center justify-center w-full flex-col gap-2">
             <div className=" w-full text-right">
@@ -362,6 +370,7 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
                                   !isReserved?
                                   <CirclePlus className="text-green-500 w-4 h-4" />:<CircleMinus className="text-red-500 w-4 h-4" />
                                 )}
+                                <p className="text-[10px] font-extralight">{convertToPersianNumber(formatNumberWithCommas(meal.price.toString()))}</p>
                               </div>
                             )}
                           </div>

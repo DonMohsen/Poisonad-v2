@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import { useReserveWithWeekStart } from "@/hooks/useReserveWithWeekStart";
 import { useEffect, useMemo, useState } from "react";
-import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import QRCodeBox from "@/components/ui/QRCodeBox";
 import { MealTypeEntry } from "@/types/reserveWithWeekStart";
 import { useRouter } from "next/navigation";
@@ -113,12 +112,7 @@ export default function HomePage() {
   const [reserveId, setReserveId] = useState<null | number>(null);
   const [modalData, setModalData] = useState<null | MealTypeEntry>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const {
-    loading: ForgetCardCodesLoading,
-    error: ForgetCardCodesError,
-    data: ForgetCardCodesData,
-    fetchForgetCardCodes,
-  } = useForgetCardCodes();
+
   const closeQRModal = () => {
     setIsModalOpen(false);
   };
@@ -127,10 +121,7 @@ export default function HomePage() {
     modalData?.reserve.id && setReserveId(modalData.reserve.id);
   }, [modalData]);
   
-  useEffect(() => {
-    reserveId && fetchForgetCardCodes(reserveId.toString());
-  }, [reserveId]);
-  
+ 
   const handleModalOpened = (meal: MealTypeEntry) => {
     setIsModalOpen(true);
     setModalData(meal);

@@ -29,7 +29,7 @@ const FoodChartSkeleton = () => {
         <tbody>
           {persianDays.map((day, dayIndex) => (
             <tr key={dayIndex}>
-              <td className="border border-gray-300 text-center align-middle py-4 bg-gray-50 font-medium">
+              <td className="border border-gray-300 text-center align-middle pt-[15px] pb-[16px] bg-gray-50 font-medium">
                 {day}
                 <div className='w-full animate-pulse  h-4  flex items-center justify-center text-center '>
                 <p className='bg-slate-100 rounded-sm animate-pulse w-[50%] h-3'>

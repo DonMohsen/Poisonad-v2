@@ -19,14 +19,13 @@ export function useFoodReserve() {
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<ReserveResponse | null>(null);
 
-  const reserve = async (
-    { selected, mealTypeId, foodTypeId,programId }: UseReserveMealParams  ) => {
+  const reserve = async ({ selected, mealTypeId, foodTypeId, programId }: UseReserveMealParams) => {
     setLoading(true);
     setError(null);
+    setData(null);
 
     try {
-           const token = localStorage.getItem("bearerToken");
-
+      const token = localStorage.getItem("bearerToken");
       if (!token) {
         throw new Error("Authentication token not found.");
       }
@@ -38,32 +37,43 @@ export function useFoodReserve() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-                              'Cache-Control': 'no-cache, no-store, must-revalidate',
-
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
           },
           body: JSON.stringify({
             foodTypeId,
             freeFoodSelected: false,
             mealTypeId,
             selected,
-            selectedCount: 0,
+            selectedCount: selected ? 1 : 0,
           }),
         }
       );
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        // Return consistent error format
+        return {
+          type: "ERROR",
+          messageFa: result.messageFa || "خطا در سرور",
+          status: response.status
+        };
       }
 
-      const result = await response.json();
       setData(result);
-      return result;
+      return {
+        type: "SUCCESS",
+        ...result
+      };
+
     } catch (err) {
-if (err instanceof Error) {
-  setError(err);
-} else {
-  setError(new Error("Unknown error occurred"));
-}    } finally {
+      // Return consistent error format for network/other errors
+      return {
+        type: "ERROR",
+        messageFa: err instanceof Error ? err.message : "خطای غیرمنتظره رخ داد",
+        status: 500
+      };
+    } finally {
       setLoading(false);
     }
   };

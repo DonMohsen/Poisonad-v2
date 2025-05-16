@@ -56,24 +56,24 @@ export default function Header() {
         {
         WeekReserveData?
         <div className='flex items-center justify-center gap-[2px] '>
-          <p className='text-sm'>
+          <div className='text-sm'>
             تومان
-          </p>
-          <p className='font-medium text-sm'>
+          </div>
+          <div className='font-medium text-sm'>
 
         {`${convertToPersianNumber(formatNumberWithCommas(WeekReserveData.remainCredit.toString()))}`}
-          </p>
+          </div>
           <Wallet className='w-6 h-6' />
         </div>:
         WeekReserveLoading?
         <div className='flex items-center justify-center gap-[2px] '>
-          <p className='text-sm'>
+          <div className='text-sm'>
             تومان
-          </p>
-          <p className='font-medium text-sm'>
+          </div>
+          <div className='font-medium text-sm'>
             <Loader/>
         {/* {`${convertToPersianNumber(formatNumberWithCommas(WeekReserveData.remainCredit.toString()))}`} */}
-          </p>
+          </div>
           <Wallet className='w-6 h-6' />
         </div>
         :

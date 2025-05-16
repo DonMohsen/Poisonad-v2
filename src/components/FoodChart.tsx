@@ -6,21 +6,35 @@ import QRCodeBox from "./ui/QRCodeBox";
 import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import { QRCodeBoxSkeleton } from "./ui/QRCodeBoxSkeleton";
 import {
-  
   convertToPersianDate,
   convertToPersianNumber,
   convertToPersianWeekday,
 } from "@/lib/utils/convertToPersian";
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { isPastDate } from "@/lib/utils/time-check";
-import { Plus, SquarePlus } from "lucide-react";
+import { CircleMinus, CirclePlus, Info, Plus, SquarePlus } from "lucide-react";
 import { formatNumberWithCommas } from "@/lib/utils/formatNumber";
 import { useFoodReserve } from "@/hooks/useFoodReserve";
 import useFoodPrograms from "@/hooks/useFoodPrograms";
 import { useReserveWithWeekStart } from "@/hooks/useReserveWithWeekStart";
 import useReserveWithStartWeekStore from "@/stores/useReserveWithStartWeekStore";
-
-const FoodChart = ({ data ,date}: { data: FoodProgramResponse ,date:string}) => {
+import Loader from "./Loader";
+import toast from "react-hot-toast";
+import { CustomToast } from "./ui/CustomToast";
+interface ReserveParams {
+  programId: number;
+  foodTypeId: number;
+  mealTypeId: number;
+  event: React.MouseEvent;
+  selected:boolean
+}
+const FoodChart = ({
+  data,
+  date,
+}: {
+  data: FoodProgramResponse;
+  date: string;
+}) => {
   const [selectedReserve, setSelectedReserve] = useState<
     FoodProgramResponse["payload"]["userWeekReserves"][0] | null
   >(null);
@@ -31,20 +45,30 @@ const FoodChart = ({ data ,date}: { data: FoodProgramResponse ,date:string}) => 
     data: ForgetCardCodesData,
     fetchForgetCardCodes,
   } = useForgetCardCodes();
-   const {
-    refetch,
-    loading:foodProgramLoading
-  } = useFoodPrograms(104, date);
-  const { refetch:reserveWithWeekStartrefetch } = useReserveWithWeekStart("2025-05-12");
- const reserveWithWeekStartData = useReserveWithStartWeekStore((state) => state.weekReserveData);
-  const reserveWithWeekStartLoading = useReserveWithStartWeekStore((state) => state.loading);
-  const reserveWithWeekStartError = useReserveWithStartWeekStore((state) => state.error);
+  const { refetch, loading: foodProgramLoading } = useFoodPrograms(104, date);
+  const { refetch: reserveWithWeekStartrefetch } =
+    useReserveWithWeekStart("2025-05-12");
+  const reserveWithWeekStartData = useReserveWithStartWeekStore(
+    (state) => state.weekReserveData
+  );
+  const reserveWithWeekStartLoading = useReserveWithStartWeekStore(
+    (state) => state.loading
+  );
+  const reserveWithWeekStartError = useReserveWithStartWeekStore(
+    (state) => state.error
+  );
+  const [foodReserveLoad, setFoodReserveLoad] = useState<number | null>(null);
 
-    const { reserve, data:foodReserveData, loading:foodReserveLoading, error:foodReserveError } = useFoodReserve();
+  const {
+    reserve,
+    data: foodReserveData,
+    loading: foodReserveLoading,
+    error: foodReserveError,
+  } = useFoodReserve();
 
   const closeQRModal = () => {
-    setIsModalOpen(false);
     // setSelectedReserve(null);
+    setIsModalOpen(false);
   };
 
   const persianDays = [
@@ -100,7 +124,7 @@ const FoodChart = ({ data ,date}: { data: FoodProgramResponse ,date:string}) => 
       date.getDate() === today.getDate()
     );
   };
-  console.log("selected",selectedReserve);
+  // console.log("selected",selectedReserve);
   const handlModalTitleColor = (
     selectedReserve: FoodProgramResponse["payload"]["userWeekReserves"][0]
   ) => {
@@ -116,35 +140,48 @@ const FoodChart = ({ data ,date}: { data: FoodProgramResponse ,date:string}) => 
   };
   const allPrograms = data.payload.selfWeekPrograms.flat();
   const reservableFoods = allPrograms.filter((p) => !p.reserveRuleViolated);
-  useEffect(() => {
-    console.log("data", data);
-  }, []);
 
-  // console.log(allPrograms);
-const handlePerformReserve=async(e: React.MouseEvent,programId:number,foodTypeId:number,mealTypeId:number)=>{
-      e.stopPropagation()
-  const selected = false;
-const result = await reserve({ selected, mealTypeId, foodTypeId, programId });
-console.log("Result of reserve: ", result);
-if (result?.type==="SUCCESS") {
-  console.log("Calling refetch");
-  reserveWithWeekStartrefetch();
-  refetch()
+const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, selected}: ReserveParams) => {
+  event.stopPropagation();
+  setFoodReserveLoad(programId);
 
-}
+  const result = await reserve({
+    selected,
+    mealTypeId,
+    foodTypeId,
+    programId,
+  });
 
-}
-function getFormattedPersianDateFromPrograms(programDate: string): string | null {
-  for (const dayMeals of data.payload.selfWeekPrograms) {
-    for (const meal of dayMeals) {
-      if (meal.date === programDate) {
-        return getPersianDate(meal.date);
+  console.log('Reservation result:', result); // Debug log
+
+  if (result?.type === "SUCCESS") {
+    reserveWithWeekStartrefetch();
+    refetch();
+    toast.custom((t) => (
+      <CustomToast t={t} type="success" message={result.messageFa || "رزرو با موفقیت انجام شد"} />
+    ));
+  } 
+  else if (result?.type === "ERROR") {
+    toast.custom((t) => (
+      <CustomToast t={t} type="error" message={result.messageFa || "خطا در انجام رزرو"} />
+    ));
+  }
+
+  setFoodReserveLoad(null);
+};
+  function getFormattedPersianDateFromPrograms(
+    programDate: string
+  ): string | null {
+    for (const dayMeals of data.payload.selfWeekPrograms) {
+      for (const meal of dayMeals) {
+        if (meal.date === programDate) {
+          return getPersianDate(meal.date);
+        }
       }
     }
+    return null;
   }
-  return null;
-}
-console.log("programs::",data.payload.selfWeekPrograms);
+  console.log("programs::", data.payload.selfWeekPrograms);
 
   return (
     <>
@@ -152,15 +189,19 @@ console.log("programs::",data.payload.selfWeekPrograms);
         <Modal
           open={isModalOpen}
           onClose={closeQRModal}
-          title={`جزئیات غذای ${selectedReserve.consumed === true
-                  ? "مصرف شده"
-                  : selectedReserve.consumed === false &&
-                    isPastDate(selectedReserve.programDate)
-                  ? "منسوخ شده"
-                  : "رزرو شده"}`}
+          title={`جزئیات غذای ${
+            selectedReserve.consumed === true
+              ? "مصرف شده"
+              : selectedReserve.consumed === false &&
+                isPastDate(selectedReserve.programDate)
+              ? "منسوخ شده"
+              : "رزرو شده"
+          }`}
           titleLoading={!!ForgetCardCodesLoading}
           titleColor={handlModalTitleColor(selectedReserve)}
-          downloadFileName={`${ForgetCardCodesData?.meal} ${convertToPersianNumber(
+          downloadFileName={`${
+            ForgetCardCodesData?.meal
+          } ${convertToPersianNumber(
             convertToPersianWeekday(selectedReserve?.programDate)
           )}`}
         >
@@ -169,14 +210,21 @@ console.log("programs::",data.payload.selfWeekPrograms);
               <p className="font-extrabold mb-2 ">
                 {selectedReserve.foodNames}
               </p>
-              <p className="font-light mb-2 text-md ">
-              {ForgetCardCodesData?.meal} {convertToPersianNumber(
-            convertToPersianWeekday(selectedReserve?.programDate)
-          )}
-{selectedReserve?.programDate
-  ? convertToPersianNumber(convertToPersianDate(getFormattedPersianDateFromPrograms(selectedReserve.programDate)!))
-  : null}
-              </p>
+              <div className="font-light mb-2 text-md ">
+                {ForgetCardCodesData?.meal}{" "}
+                {convertToPersianNumber(
+                  convertToPersianWeekday(selectedReserve?.programDate)
+                )}
+                {selectedReserve?.programDate
+                  ? convertToPersianNumber(
+                      convertToPersianDate(
+                        getFormattedPersianDateFromPrograms(
+                          selectedReserve.programDate
+                        )!
+                      )
+                    )
+                  : null}
+              </div>
               <p className="font-light mb-2 text-sm   ">
                 {selectedReserve.selfName}
               </p>
@@ -186,14 +234,14 @@ console.log("programs::",data.payload.selfWeekPrograms);
                 )}{" "}
                 :تعداد
               </p>
-              <p className="font-light mb-2 text-sm ">
+              {/* <p className="font-light mb-2 text-sm ">
                 {selectedReserve.consumed === true
                   ? "مصرف شده"
                   : selectedReserve.consumed === false &&
                     isPastDate(selectedReserve.programDate)
                   ? "منسوخ شده"
                   : "رزرو شده"}
-              </p>
+              </p> */}
             </div>
 
             {ForgetCardCodesLoading ? (
@@ -239,7 +287,7 @@ console.log("programs::",data.payload.selfWeekPrograms);
             {data.payload.selfWeekPrograms.map((dayMeals, dayIndex) => {
               const today = dayMeals.some((meal) => isToday(meal.date));
               return (
-                <tr key={dayIndex} className={""}>
+                <tr key={dayIndex}>
                   <td
                     className={`border border-gray-300 text-center align-middle py-4 ${
                       today ? "bg-yellow-100 font-bold" : "bg-gray-50"
@@ -268,7 +316,7 @@ console.log("programs::",data.payload.selfWeekPrograms);
                     return (
                       <td
                         key={`${dayIndex}-${mealType.id}`}
-                        className={`border border-gray-300 text-center align-middle py-4 max-md:text-[10px] text-[12px] ${
+                        className={`border border-gray-300 relative text-center align-middle py-4 max-md:text-[10px] text-[12px] ${
                           isConsumed
                             ? "bg-orange-50 cursor-pointer hover:bg-orange-100"
                             : isReserved
@@ -280,41 +328,42 @@ console.log("programs::",data.payload.selfWeekPrograms);
                             setSelectedReserve(reserve);
                             setIsModalOpen(true);
                             fetchForgetCardCodes(reserve.id.toString());
+                          } else if (!reserve && meal?.foodId) {
+                            console.log(meal.foodName);
                           }
                         }}
                       >
                         {meal && (
-                          <div className="leading-tight space-y-1 px-1 flex items-center justify-center w-full flex-col ">
-                            <div className="font-medium line-clamp-2 h-[26px]">
-                              {meal.foodName}
+                          <div className="h-full flex flex-col px-1">
+                            <div className="flex-grow">
+                              <div className="font-medium line-clamp-2 h-[30px]">
+                                {meal.foodName}
+                              </div>
                             </div>
-                            <div className="w-full flex items-center justify-center">
-                              {reservableFoods.some(
-                                (f) => f.programId === meal.programId
-                              )
-                                ? 
-                                <div 
-                                onClick={(e)=>handlePerformReserve(e,meal.programId,meal.foodTypeId,meal.mealTypeId)}
-                                className="border border-black/[0.3] cursor-pointer max-md:w-full md:w-[50%] bg-white hover:bg-green-100 transition-all duration-300 rounded-md   flex items-center justify-between ">
-                                <Plus className="text-green-500 w-full flex items-end justify-end"  />
-                                {foodReserveLoading&&"Loading"}
-                                {/* {foodProgramLoading&&"..."} */}
-                                  <p className="w-full font-extrabold  h-full flex items-center justify-center translate-y-[1px]">{convertToPersianNumber(formatNumberWithCommas(meal.price.toString()))}</p>
-                                </div>
-                                : 
-                                null
-                                }
-                            </div>
-                            {/* {isConsumed && (
-                              <div className="text-xs text-orange-600">
-                                مصرف شده
+
+                            {reservableFoods.some(
+                              (f) => f.programId === meal.programId
+                            ) && (
+                              <div
+                                onClick={(e) => {
+                                  if (foodReserveLoad !== meal.programId) {
+                                    e.stopPropagation();
+                                    handlePerformReserve({event:e,foodTypeId:meal.foodTypeId,mealTypeId:meal.mealTypeId,programId:meal.programId,selected:!isReserved});
+                                  }
+                                }}
+                                className={`absolute cursor-pointer flex items-center justify-center bottom-[2px] right-[2px] bg-transparent backdrop-blur-sm rounded-full  hover:bg-green-100 transition-all ${
+                                  foodReserveLoad !== null &&
+                                  foodReserveLoad !== meal.programId
+                                    ? "opacity-50 pointer-events-none"
+                                    : ""
+                                }`}
+                              >
+                                {foodReserveLoad === meal.programId ? <Loader />: (
+                                  !isReserved?
+                                  <CirclePlus className="text-green-500 w-4 h-4" />:<CircleMinus className="text-red-500 w-4 h-4" />
+                                )}
                               </div>
                             )}
-                            {isReserved && !isConsumed && (
-                              <div className="text-xs text-green-600">
-                                رزرو شده
-                              </div>
-                            )} */}
                           </div>
                         )}
                       </td>

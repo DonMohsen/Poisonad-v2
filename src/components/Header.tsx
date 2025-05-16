@@ -9,12 +9,13 @@ import { CustomToast } from './ui/CustomToast';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 import useReserveWithStartWeekStore from '@/stores/useReserveWithStartWeekStore';
-import { ChevronDown, LogOut, Wallet } from 'lucide-react';
+import { ChevronDown, Loader2, LogOut, Wallet } from 'lucide-react';
 import { formatNumberWithCommas } from '@/lib/utils/formatNumber';
 import { useEffect, useState } from "react";
 import UserModal from "./ui/UserModal";
 import { convertToPersianNumber } from "@/lib/utils/convertToPersian";
 import { useReserveWithWeekStart } from "@/hooks/useReserveWithWeekStart";
+import Loader from "./Loader";
 
 export default function Header() {
   const { loading, error, data } = useUserInfo();
@@ -22,8 +23,9 @@ export default function Header() {
   const userInfo = useUserStore((state) => state.user);
   const userLogout = useUserStore((state) => state.logout);
   const WeekReserveData = useReserveWithStartWeekStore((state) => state.weekReserveData);
+    const WeekReserveLoading = useReserveWithStartWeekStore((state) => state.loading);
+
   const [isUserModalOpen, setIsUserModalOpen] = useState(false)
-  
   
 
   const handleLogout = async () => { 
@@ -63,6 +65,18 @@ export default function Header() {
           </p>
           <Wallet className='w-6 h-6' />
         </div>:
+        WeekReserveLoading?
+        <div className='flex items-center justify-center gap-[2px] '>
+          <p className='text-sm'>
+            تومان
+          </p>
+          <p className='font-medium text-sm'>
+            <Loader/>
+        {/* {`${convertToPersianNumber(formatNumberWithCommas(WeekReserveData.remainCredit.toString()))}`} */}
+          </p>
+          <Wallet className='w-6 h-6' />
+        </div>
+        :
         <p>
 
         </p>

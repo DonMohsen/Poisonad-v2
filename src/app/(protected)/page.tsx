@@ -45,18 +45,7 @@ import useFoodProgramStore from "@/stores/useFoodProgramStore";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
-  const [weekStartDate, setWeekStartDate] = useState('');
-  
-  useEffect(() => {
-    // Set current week's Monday as default weekStartDate
-    const now = new Date();
-    const day = now.getDay(); // 0 (Sun) to 6 (Sat)
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Get Monday
-    const monday = new Date(now.setDate(diff));
-    const formatted = monday.toISOString().split('T')[0]; // "2025-05-05"
-    setWeekStartDate(formatted);
-  }, []);
-  
+
 
   // Improved week start calculation
   const getStartOfWeek = (date: Date) => {

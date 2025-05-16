@@ -68,11 +68,19 @@ const persianWeekdayNames = [
   'شنبه',
 ];
 
-export function convertToPersianDate(input: string): string {
+export function convertToPersianWeekday(input: string): string {
   const jDate = dayjs(input).calendar('jalali');
   const weekday = persianWeekdayNames[jDate.day()];
-  const day = jDate.date();
-  const month = persianMonthNames[jDate.month()];
+ 
+  return `${weekday}`;
+}
+// utils/convertPersianDate.ts
 
-  return `${weekday} ${day} ${month}`;
+export function convertToPersianDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split("/")
+
+  const monthIndex = parseInt(month, 10) - 1
+  const monthName = persianMonths[monthIndex] || ""
+
+  return ` ${parseInt(day)} ${monthName} ${year}`
 }

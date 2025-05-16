@@ -6,8 +6,10 @@ import QRCodeBox from "./ui/QRCodeBox";
 import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import { QRCodeBoxSkeleton } from "./ui/QRCodeBoxSkeleton";
 import {
+  
   convertToPersianDate,
   convertToPersianNumber,
+  convertToPersianWeekday,
 } from "@/lib/utils/convertToPersian";
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { isPastDate } from "@/lib/utils/time-check";
@@ -98,7 +100,7 @@ const FoodChart = ({ data ,date}: { data: FoodProgramResponse ,date:string}) => 
       date.getDate() === today.getDate()
     );
   };
-  console.log(selectedReserve);
+  console.log("selected",selectedReserve);
   const handlModalTitleColor = (
     selectedReserve: FoodProgramResponse["payload"]["userWeekReserves"][0]
   ) => {
@@ -132,6 +134,18 @@ if (result?.type==="SUCCESS") {
 }
 
 }
+function getFormattedPersianDateFromPrograms(programDate: string): string | null {
+  for (const dayMeals of data.payload.selfWeekPrograms) {
+    for (const meal of dayMeals) {
+      if (meal.date === programDate) {
+        return getPersianDate(meal.date);
+      }
+    }
+  }
+  return null;
+}
+console.log("programs::",data.payload.selfWeekPrograms);
+
   return (
     <>
       {selectedReserve && (
@@ -147,7 +161,7 @@ if (result?.type==="SUCCESS") {
           titleLoading={!!ForgetCardCodesLoading}
           titleColor={handlModalTitleColor(selectedReserve)}
           downloadFileName={`${ForgetCardCodesData?.meal} ${convertToPersianNumber(
-            convertToPersianDate(selectedReserve?.programDate)
+            convertToPersianWeekday(selectedReserve?.programDate)
           )}`}
         >
           <div className="flex items-center justify-center w-full flex-col gap-2">
@@ -157,8 +171,11 @@ if (result?.type==="SUCCESS") {
               </p>
               <p className="font-light mb-2 text-md ">
               {ForgetCardCodesData?.meal} {convertToPersianNumber(
-            convertToPersianDate(selectedReserve?.programDate)
+            convertToPersianWeekday(selectedReserve?.programDate)
           )}
+{selectedReserve?.programDate
+  ? convertToPersianNumber(convertToPersianDate(getFormattedPersianDateFromPrograms(selectedReserve.programDate)!))
+  : null}
               </p>
               <p className="font-light mb-2 text-sm   ">
                 {selectedReserve.selfName}

@@ -19,7 +19,7 @@ export const CustomToast = ({ t, message, type = "success" }: CustomToastProps) 
     if (type === "loading") return;
 
     const start = Date.now();
-    const duration = 4000;
+    const duration = 3000;
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - start;
@@ -62,12 +62,9 @@ export const CustomToast = ({ t, message, type = "success" }: CustomToastProps) 
     onDragEnd={(e, info) => {
       if (info.offset.x > 100) toast.dismiss(t.id);
     }}
-    className={`text-white px-4 py-3 rounded-lg shadow-lg cursor-pointer w-full max-w-sm relative ${getColor()}`}
+    className={`text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-center  w-full max-w-sm relative ${getColor()}`}
   >
-    <div className="flex items-center">
-      {getIcon()}
-      <span>{message}</span>
-    </div>
+   
 
     {/* Timer bar */}
     {type !== "loading" && (
@@ -78,13 +75,17 @@ export const CustomToast = ({ t, message, type = "success" }: CustomToastProps) 
     )}
 
     {/* Close Button */}
-    <div className="mt-3 text-right">
+    <div className=" text-right">
       <button
         onClick={() => toast.dismiss(t.id)}
-        className="text-sm text-white/80 hover:text-white transition"
+        className="text-sm text-white/80 hover:text-white cursor-pointer transition font-extrabold border border-white/[0.6] rounded-md py-1 px-4"
       >
-        Close
+        بستن
       </button>
+    </div>
+     <div className="flex items-center w-full  justify-end">
+      {getIcon()}
+      <span>{message}</span>
     </div>
   </motion.div>
 )}

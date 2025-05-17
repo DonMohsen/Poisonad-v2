@@ -12,7 +12,7 @@ import {
 } from "@/lib/utils/convertToPersian";
 import { ModalTitleColor, ModalTitleColorType } from "@/types/colors";
 import { isPastDate } from "@/lib/utils/time-check";
-import { CircleMinus, CirclePlus, Info, Plus, SquarePlus } from "lucide-react";
+import { CircleMinus, CirclePlus, Info, Minus, Plus, SquarePlus } from "lucide-react";
 import { formatNumberWithCommas } from "@/lib/utils/formatNumber";
 import { useFoodReserve } from "@/hooks/useFoodReserve";
 import useFoodPrograms from "@/hooks/useFoodPrograms";
@@ -21,6 +21,7 @@ import useReserveWithStartWeekStore from "@/stores/useReserveWithStartWeekStore"
 import Loader from "./Loader";
 import toast from "react-hot-toast";
 import { CustomToast } from "./ui/CustomToast";
+import QRCodeWithLogo from "./ui/QrCodeWIthLogo";
 interface ReserveParams {
   programId: number;
   foodTypeId: number;
@@ -255,7 +256,9 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
             {ForgetCardCodesLoading ? (
               <QRCodeBoxSkeleton />
             ) : ForgetCardCodesData ? (
-              <QRCodeBox value={ForgetCardCodesData?.forgotCardCode} />
+              // <QRCodeBox value={ForgetCardCodesData?.forgotCardCode} logoUrl="/logo.webp" />
+              <QRCodeWithLogo value={ForgetCardCodesData?.forgotCardCode}  logoUrl="/logo.webp" />
+
             ) : (
               "خطای نامشخص"
             )}
@@ -359,16 +362,17 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
                                     handlePerformReserve({event:e,foodTypeId:meal.foodTypeId,mealTypeId:meal.mealTypeId,programId:meal.programId,selected:!isReserved});
                                   }
                                 }}
-                                className={`absolute cursor-pointer flex items-center justify-center bottom-[2px] right-[2px] bg-transparent backdrop-blur-sm rounded-full  hover:bg-green-100 transition-all ${
+                                className={`absolute cursor-pointer flex  py-[2px] px-1 items-center justify-center bottom-[2px] right-[2px] bg-transparent backdrop-blur-sm  rounded-full ${!isReserved?'hover:bg-green-100':"hover:bg-red-100"} transition-all ${
                                   foodReserveLoad !== null &&
                                   foodReserveLoad !== meal.programId
                                     ? "opacity-50 pointer-events-none"
                                     : ""
                                 }`}
+                                   style={{ color: !isReserved?'green':'red' }}
                               >
                                 {foodReserveLoad === meal.programId ? <Loader />: (
                                   !isReserved?
-                                  <CirclePlus className="text-green-500 w-4 h-4" />:<CircleMinus className="text-red-500 w-4 h-4" />
+                                  <Plus className="text-green-500 w-4 h-4" />:<Minus  className="text-red-500 w-4 h-4" />
                                 )}
                                 <p className="text-[10px] font-extralight">{convertToPersianNumber(formatNumberWithCommas(meal.price.toString()))}</p>
                               </div>

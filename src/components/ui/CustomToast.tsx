@@ -85,7 +85,7 @@ export const CustomToast = ({ t, message, type = "success" }: CustomToastProps) 
     </div>
      <div className="flex items-center w-full  justify-end">
       {getIcon()}
-      <span>{message}</span>
+      <span className="text-right">{message}</span>
     </div>
   </motion.div>
 )}

@@ -193,22 +193,26 @@ export default function HomePage() {
       <div className="flex items-center justify-center gap-2 select-none my-5 w-full h-full ">
     <div className="flex relative items-center justify-center">
       {weekDiff > 2 && selectedWeekStart < currentWeekSaturday && (
-                    <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center absolute -left-10">
+                    <button
+                    disabled={foodLoading}
+                      onClick={() => setSelectedWeekStart(currentWeekSaturday)}
+                    className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center absolute -left-10">
 
         <HiChevronDoubleLeft
-          onClick={() => setSelectedWeekStart(currentWeekSaturday)}
           className=" cursor-pointer   w-6 h-6 transition-all duration-300"
         />
-        </div>
+        </button>
       )}
     </div>
-    <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center">
+    <button
+    disabled={foodLoading}
+      onClick={handleNextWeek}
+    className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center">
 
     <HiChevronLeft
       className="w-6 h-6  cursor-pointer"
-      onClick={handleNextWeek}
     />
-    </div>
+    </button>
 
     <div className="flex items-center justify-center flex-col w-[150px]">
       <h2 className="font-bold" dir="rtl">
@@ -222,21 +226,27 @@ export default function HomePage() {
     </div>
 
     <div className="relative flex">
-    <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center">
+    <button
+    disabled={foodLoading}
+      onClick={handlePrevWeek}
+    className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center">
   <HiChevronRight
+      aria-disabled={foodLoading}
     className="w-6 h-6  cursor-pointer"
-    onClick={handlePrevWeek}
   />
-</div>
+</button>
 
       {weekDiff > 2 && selectedWeekStart > currentWeekSaturday && (
-            <div className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center absolute -right-12">
+            <button
+            disabled={foodLoading}
+              onClick={() => setSelectedWeekStart(currentWeekSaturday)}
+            className="w-8 h-8 md:hover:bg-green-200 cursor-pointer transition-all duration-300 border-black/[0.2] border group rounded-md flex items-center justify-center absolute -right-12">
 
         <HiChevronDoubleRight
-          onClick={() => setSelectedWeekStart(currentWeekSaturday)}
+aria-disabled={foodLoading}
           className=" w-6 h-6  cursor-pointer transition-all  duration-300"
         />
-      </div>
+      </button>
       )}
     </div>
   </div>

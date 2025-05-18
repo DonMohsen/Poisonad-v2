@@ -219,8 +219,8 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
               <p className="font-extrabold mb-2 ">
                 {selectedReserve.foodNames}
               </p>
-              <div className="font-light mb-2 text-md ">
-                {ForgetCardCodesData?.meal}{" "}
+              <div className="font-light mb-2 gap-1 flex items-start justify-end w-full text-md ">
+                
                 {convertToPersianNumber(
                   convertToPersianWeekday(selectedReserve?.programDate)
                 )}
@@ -233,6 +233,16 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
                       )
                     )
                   : null}
+                  {ForgetCardCodesLoading?
+                <p className="w-[30px] bg-slate-100 animate-pulse h-5 rounded-md">
+
+                </p>  :
+                  <p>
+
+                {ForgetCardCodesData?.meal}
+                </p>
+
+                }
               </div>
               <p className="font-light mb-2 text-sm   ">
                 {selectedReserve.selfName}
@@ -257,13 +267,13 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
               <QRCodeBoxSkeleton />
             ) : ForgetCardCodesData ? (
               // <QRCodeBox value={ForgetCardCodesData?.forgotCardCode} logoUrl="/logo.webp" />
-              <QRCodeWithLogo value={ForgetCardCodesData?.forgotCardCode}  logoUrl="/logo.webp" />
+              <QRCodeBox value={ForgetCardCodesData?.forgotCardCode}   />
 
             ) : (
               "خطای نامشخص"
             )}
             {ForgetCardCodesLoading ? (
-              <p></p>
+              <div className="w-[100px] animate-pulse h-6 rounded-md bg-slate-200"></div>
             ) : ForgetCardCodesError ? (
               <p>خطای نامشخص</p>
             ) : (

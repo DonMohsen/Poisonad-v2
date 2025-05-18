@@ -75,7 +75,7 @@ const darkHex = hex ? darkenHexColor(hex, 100) : '#000';
                   className={`text-[15px] font-extrabold text-white w-full flex items-end justify-end ${titleColor} p-4`}
                 >
                   {titleLoading ? (
-                    <div className="w-full rounded-md bg-slate-200 h-7" />
+                    <div className="w-full rounded-md bg-slate-200 h-6" />
                   ) : (
                     <div className={`flex items-center justify-center `}
   style={{ color: darkHex }}

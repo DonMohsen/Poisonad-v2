@@ -198,7 +198,7 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
               ? "منسوخ شده"
               : "رزرو شده"
           }`}
-          titleLoading={!!ForgetCardCodesLoading}
+          titleLoading={false}
           titleColor={handlModalTitleColor(selectedReserve)}
           downloadFileName={`${
             ForgetCardCodesData?.meal

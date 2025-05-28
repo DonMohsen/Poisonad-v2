@@ -81,6 +81,6 @@ export function convertToPersianDate(dateStr: string): string {
 
   const monthIndex = parseInt(month, 10) - 1
   const monthName = persianMonths[monthIndex] || ""
-
-  return ` ${parseInt(day)} ${monthName} ${year}`
+  //!removed {year}!!!
+  return ` ${parseInt(day)} ${monthName}`
 }

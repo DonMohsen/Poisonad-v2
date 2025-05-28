@@ -16,7 +16,7 @@ const useAuth = () => {
       postData.append('password', password);
       postData.append('grant_type', 'password');
       postData.append('scope', 'read write');
-
+      
       const options = {
         method: 'POST',
         headers: {

@@ -41,6 +41,7 @@ import { getPersianWeekRange } from "@/lib/utils/getPersianWeekRange";
 import { convertToPersianNumber } from "@/lib/utils/convertToPersian";
 import { HiChevronDoubleLeft, HiChevronDoubleRight, HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import useFoodProgramStore from "@/stores/useFoodProgramStore";
+import Link from "next/link";
 
 export default function HomePage() {
   const { loading, error, data } = useUserInfo();
@@ -191,6 +192,7 @@ export default function HomePage() {
       </Modal> */}
       <div className="flex flex-col items-center justify-center bg-white">
       <div className="flex items-center justify-center gap-2 select-none my-5 w-full h-full ">
+        
     <div className="flex relative items-center justify-center">
       {weekDiff > 2 && selectedWeekStart < currentWeekSaturday && (
                     <button
@@ -234,6 +236,7 @@ export default function HomePage() {
       aria-disabled={foodLoading}
     className="w-6 h-6  cursor-pointer"
   />
+  
 </button>
 
       {weekDiff > 2 && selectedWeekStart > currentWeekSaturday && (
@@ -247,6 +250,7 @@ aria-disabled={foodLoading}
           className=" w-6 h-6  cursor-pointer transition-all  duration-300"
         />
       </button>
+      
       )}
     </div>
   </div>
@@ -260,6 +264,7 @@ aria-disabled={foodLoading}
             <TableSkeleton />
           ) : foodProgramData && foodProgramData.payload.selfWeekPrograms ? (
             <FoodChart data={foodProgramData} date={apiFormattedDate}  />
+            
           ) : (
             <div className="text-center py-10 text-gray-500">
               اطلاعاتی برای این هفته یافت نشد

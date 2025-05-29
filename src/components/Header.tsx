@@ -170,14 +170,30 @@ export default function Header() {
       }
       </div>
       <div className="w-full h-[1px] px-0 bg-black/[0.1] rounded-full"/>
-      <div className="w-full justify-end items-center flex pr-4">
+      <div className="w-full justify-start items-center flex p-4 text-[14px]" dir="rtl">
+          {`مقطع تحصیلی: ${userInfo.student.studyLevel.description} `}
+       
+      </div>
+      <div className="w-full justify-start items-center flex px-4 text-[14px]" dir="rtl">
+          {`رشته تحصیلی: ${userInfo.student.studyMajor.description} `}
+       
+      </div>
+      <div className="w-full justify-start items-center flex px-4 text-[14px]" dir="rtl">
+          {`نوع ورودی: ${userInfo.student.entranceType} `}
+       
+      </div>
+       <div className="w-full justify-start items-center flex px-4 text-[14px]" dir="rtl">
+          {`شماره همراه: ${convertToPersianNumber(userInfo.mobileNumber)} `}
+       
+      </div>
+      <div>
 
       </div>
      <div className="flex items-center justify-start w-full p-2">
       <button 
-      className="flex items-center group border rounded-xl p-2 border-black/[0.1] justify-center gap-1 cursor-pointer"
+      className="flex items-center group border rounded-lg text-[14px] text-white bg-red-500 px-2 py-1 border-black/[0.1] justify-center gap-1 cursor-pointer"
       onClick={handleLogout}>
-      <LogOut className="rotate-180  group-hover:-translate-x-1 transition-all duration-300 text-red-500"  />
+      <LogOut className="rotate-180  group-hover:-translate-x-1 transition-all duration-300 text-white w-5 h-5"  />
       {logoutLoading?"...":"خروج"}
       
       </button>

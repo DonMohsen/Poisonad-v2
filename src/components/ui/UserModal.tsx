@@ -60,7 +60,7 @@ export default function UserModal({ isOpen, onClose, children }: ModalProps) {
       {isOpen && (
         <motion.div
           ref={modalRef}
-          className="fixed top-15 right-4 bg-white shadow-lg rounded-xl z-50"
+          className="fixed top-15 right-4 bg-white shadow-lg rounded-xl z-50 max-w-[300px] lg:max-w-[400px]"
           variants={modalVariants}
           initial="initial"
           animate="animate"

@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
  * @param inputDate - Date string in "YYYY-MM-DD" format
  * @returns true if the date is before today, false otherwise
  */
-export function isPastDate(inputDate: string): boolean {
+export function isPastDate(inputDate: string|undefined): boolean {
   const today = dayjs().startOf('day');
   const input = dayjs(inputDate).startOf('day');
 

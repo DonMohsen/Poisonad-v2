@@ -333,6 +333,9 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
                       : null;
                     const isReserved = !!reserve;
                     const isConsumed = reserve?.consumed;
+                    
+                   const isPassed = isPastDate(reserve?.programDate);
+
 
                     return (
                       <td
@@ -340,9 +343,10 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
                         className={`border border-gray-300 relative text-center align-middle py-4 max-md:text-[10px] text-[12px] ${
                           isConsumed
                             ? "bg-orange-50 cursor-pointer hover:bg-orange-100"
-                            : isReserved
-                            ? "bg-green-50 cursor-pointer hover:bg-green-100"
-                            : ""
+                            : isReserved&&isPassed
+                            ? "bg-red-50 cursor-pointer hover:bg-red-100"
+                            :isReserved? "bg-green-50 cursor-pointer hover:bg-green-100"
+                            :""
                         }`}
                         onClick={() => {
                           if (reserve) {

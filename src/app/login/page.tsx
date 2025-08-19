@@ -65,7 +65,7 @@ const LoginPage = () => {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
       toast.custom(
-        (t) => <CustomToast t={t} message="!خروج موفقیت آمیز" type="success" />,
+        (t) => <CustomToast t={t} message={`مشکلی رخ داد علت :${errorMessage}` } type="error" />,
         { duration: Infinity }
       );
     } finally {

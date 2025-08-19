@@ -18,7 +18,7 @@ const useFoodPrograms = (selfId: number, date: string) => {
       const formattedDate = `${date.split('T')[0]}+00:00:00`;
       const token = localStorage.getItem("bearerToken");
       const response = await axios.get<FoodProgramResponse>(
-        `https://saba.nus.ac.ir/rest/programs/v2?selfId=${selfId}&weekStartDate=${formattedDate}`,
+        `https://saba.tvu.ac.ir/rest/programs/v2?selfId=${selfId}&weekStartDate=${formattedDate}`,
         {
           headers: {
             Accept: "application/json",
@@ -29,6 +29,8 @@ const useFoodPrograms = (selfId: number, date: string) => {
       );
 
       setData(response.data);
+      console.log("The program raw data===================>>>>>>",response);
+      
     } catch (err) {
       setError(err as AxiosError);
       clearData();

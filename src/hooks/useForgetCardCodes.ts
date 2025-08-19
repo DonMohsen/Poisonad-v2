@@ -21,7 +21,7 @@ export const useForgetCardCodes = () => {
       }
 
       const res = await fetch(
-        `https://saba.nus.ac.ir/rest/forget-card-codes/print?reserveId=${reserveId}&count=1&dailySale=false`,
+        `https://saba.tvu.ac.ir/rest/forget-card-codes/print?reserveId=${reserveId}&count=1&dailySale=false`,
         {
           method: 'GET',
           headers: {

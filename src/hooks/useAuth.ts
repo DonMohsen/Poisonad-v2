@@ -26,7 +26,7 @@ const useAuth = () => {
         body: postData.toString()
       };
 
-      const res = await fetch('https://saba.nus.ac.ir/oauth/token', options);
+      const res = await fetch('https://saba.tvu.ac.ir/oauth/token', options);
 
       if (!res.ok) {
         const errorData = await res.json();

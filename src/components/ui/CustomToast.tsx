@@ -83,9 +83,9 @@ export const CustomToast = ({ t, message, type = "success" }: CustomToastProps) 
         بستن
       </button>
     </div>
-     <div className="flex items-center w-full  justify-end">
-      {getIcon()}
+     <div className="flex items-center w-full  justify-end gap-2">
       <span className="text-right" dir="rtl">{message}</span>
+      {getIcon()}
     </div>
   </motion.div>
 )}

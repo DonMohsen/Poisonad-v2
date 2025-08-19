@@ -7,6 +7,7 @@ import { useForgetCardCodes } from "@/hooks/useForgetCardCodes";
 import { QRCodeBoxSkeleton } from "./ui/QRCodeBoxSkeleton";
 import {
   convertToPersianDate,
+  convertToPersianDay,
   convertToPersianNumber,
   convertToPersianWeekday,
 } from "@/lib/utils/convertToPersian";
@@ -59,6 +60,16 @@ const FoodChart = ({
     (state) => state.error
   );
   const [foodReserveLoad, setFoodReserveLoad] = useState<number | null>(null);
+const uniqueDays = [
+  ...new Set(
+    data.payload.selfWeekPrograms
+      .flat()
+      .map((meal) => meal.dayTranslated)
+  ),
+];
+
+console.log(uniqueDays);
+// ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
   const {
     reserve,
@@ -314,7 +325,7 @@ const handlePerformReserve = async ({event, programId, foodTypeId, mealTypeId, s
                       today ? "bg-yellow-100 font-bold" : "bg-gray-50"
                     } font-medium`}
                   >
-                    <div>{persianDays[dayIndex]}</div>
+                    <div>{convertToPersianDay(uniqueDays[dayIndex])}</div>
                     <div className="text-[10px] text-gray-600">
                       {convertToPersianNumber(
                         getPersianDate(

@@ -22,7 +22,7 @@ export default function Sidebar() {
       <div className="p-4 h-full flex flex-col gap-2">
         {/* Logo/Collapse Header */}
         <div className={`flex items-center ${!isOpen ? 'justify-center' : 'justify-between'} mb-6`}>
-          {isOpen && <h2 className="text-xl font-semibold">YourLogo</h2>}
+          {isOpen && <h2 className="text-xl font-semibold"></h2>}
           <button 
             onClick={toggle}
             className="p-2 hover:bg-gray-100 rounded-lg"

@@ -31,7 +31,7 @@ export function useFoodReserve() {
       }
 
       const response = await fetch(
-        `https://saba.nus.ac.ir/rest/reserves/${programId}/reserve`,
+        `https://saba.tvu.ac.ir/rest/reserves/${programId}/reserve`,
         {
           method: "PUT",
           headers: {

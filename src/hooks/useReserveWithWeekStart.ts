@@ -23,7 +23,7 @@ export const useReserveWithWeekStart = (weekStartDate: string) => {
       }
 
       const res = await fetch(
-        `https://saba.nus.ac.ir/rest/reserves?weekStartDate=${encodeURIComponent(weekStartDate)}+00:00:00&selfType=NORMAL`,
+        `https://saba.tvu.ac.ir/rest/reserves?weekStartDate=${encodeURIComponent(weekStartDate)}+00:00:00&selfType=NORMAL`,
         {
           method: 'GET',
           headers: {

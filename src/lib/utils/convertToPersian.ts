@@ -84,3 +84,20 @@ export function convertToPersianDate(dateStr: string): string {
   //!removed {year}!!!
   return ` ${parseInt(day)} ${monthName}`
 }
+const dayTranslatedFaMap: Record<string, string> = {
+  Saturday: "شنبه",
+  Sunday: "یک‌شنبه",
+  Monday: "دوشنبه",
+  Tuesday: "سه‌شنبه",
+  Wednesday: "چهارشنبه",
+  Thursday: "پنج‌شنبه",
+  Friday: "جمعه",
+};
+
+/**
+ * Converts an English weekday (e.g. "Sunday") to Persian (e.g. "یک‌شنبه").
+ * Returns the input if it doesn't match any known day.
+ */
+export const convertToPersianDay = (enDay: string): string => {
+  return dayTranslatedFaMap[enDay] ?? enDay;
+};

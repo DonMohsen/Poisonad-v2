@@ -22,7 +22,7 @@ export const useUserInfo = () => {
       }
 
       // Directly fetch the external endpoint here
-      const res = await fetch('https://saba.nus.ac.ir/rest/users/me', {
+      const res = await fetch('https://saba.tvu.ac.ir/rest/users/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
